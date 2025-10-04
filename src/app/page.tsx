@@ -1,7 +1,9 @@
+"use client";
+
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold">The Tutor Marketplace is coming.</h1>
+      <h1 className="text-4xl font-bold mb-8">3allemni is Coming</h1>
     </main>
   );
 }
