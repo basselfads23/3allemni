@@ -1,3 +1,5 @@
+// src/app/student/page.tsx
+
 // This directive tells Next.js that this component runs on the client side (in the browser)
 "use client";
 
@@ -81,17 +83,22 @@ export default function Home() {
             {/* Unordered list with spacing styles from global.css */}
 
             {/* Loop through tutors array and create list item for each */}
-            {tutors.map((tutor, index) => ( // .map() loops through array, tutor is current item, index is position
-              <li key={index} className="tutor-item">
-                {/* List item card with styles from global.css, key helps React track items */}
+            {tutors.map(
+              (
+                tutor,
+                index // .map() loops through array, tutor is current item, index is position
+              ) => (
+                <li key={index} className="tutor-item">
+                  {/* List item card with styles from global.css, key helps React track items */}
 
-                <p className="tutor-name">{tutor.name}</p>
-                {/* Tutor name with styles from global.css */}
+                  <p className="tutor-name">{tutor.name}</p>
+                  {/* Tutor name with styles from global.css */}
 
-                <p className="tutor-subject">{tutor.subject}</p>
-                {/* Subject with styles from global.css */}
-              </li>
-            ))}
+                  <p className="tutor-subject">{tutor.subject}</p>
+                  {/* Subject with styles from global.css */}
+                </li>
+              )
+            )}
           </ul>
         ) : (
           // else clause of ternary

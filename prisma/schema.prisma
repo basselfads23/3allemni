@@ -14,8 +14,10 @@ generator client {
 datasource db {
   provider = "postgresql"  // We're using PostgreSQL (Neon uses Postgres)
   url      = env("DATABASE_URL")  // Connection string from .env file
+  directUrl = env("DIRECT_URL")  // Direct connection for migrations (optional, used for migrations only)
 }
 // The datasource tells Prisma how to connect to your Neon database
+// directUrl is used for migrations, url is used for queries (can use connection pooling)
 
 // This block defines the structure of the "Tutor" table in your database
 model Tutor {
