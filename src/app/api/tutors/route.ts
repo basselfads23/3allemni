@@ -6,6 +6,10 @@
 // Request body: None
 // Response: Returns array of tutor objects with 200, or error message with 500
 
+// CRITICAL: Force Node.js runtime (Prisma doesn't work in Edge runtime)
+export const runtime = "nodejs"; // Tells Next.js to use Node.js runtime instead of Edge
+export const dynamic = "force-dynamic"; // Disable static optimization for this route
+
 // Import Next.js server response helper for API routes
 import { NextResponse } from "next/server"; // NextResponse: helper for creating HTTP responses (no NextRequest needed for GET without params)
 

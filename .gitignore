@@ -44,4 +44,4 @@ next-env.d.ts
 CLAUDE.md
 db.json
 /src/generated/prisma
-/jules-scratch
+.gemini/
