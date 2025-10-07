@@ -1,0 +1,26 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// This block tells Prisma how to generate the client library
+generator client {
+  provider = "prisma-client-js"  // Use the JavaScript/TypeScript client
+}
+// The generator creates code you'll import to interact with the database
+
+// This block defines where your database is and what type it is
+datasource db {
+  provider = "postgresql"  // We're using PostgreSQL (Neon uses Postgres)
+  url      = env("DATABASE_URL")  // Connection string from .env file
+}
+// The datasource tells Prisma how to connect to your Neon database
+
+// This block defines the structure of the "Tutor" table in your database
+model Tutor {
+  id      Int    @id @default(autoincrement())  // Primary key, auto-increments (1, 2, 3...)
+  name    String  // Text field for tutor's name
+  subject String  // Text field for subject they teach
+}
+// The model creates a table with 3 columns: id, name, and subject

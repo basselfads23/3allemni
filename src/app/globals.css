@@ -1,10 +1,13 @@
+/* Import Tailwind CSS base styles */
 @import "tailwindcss";
 
+/* CSS Variables for theming */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #ffffff; /* White background */
+  --foreground: #171717; /* Dark gray text */
 }
 
+/* Tailwind theme configuration */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -12,15 +15,152 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Global body styles */
+body {
+  background: var(--background); /* Apply background color */
+  color: var(--foreground); /* Apply text color */
+  font-family: Arial, Helvetica, sans-serif; /* Default font */
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* BLOCK: Page container styles */
+/* Container for main page content with centered layout */
+.page-container {
+  display: flex; /* Flexbox layout */
+  min-height: 100vh; /* Full viewport height */
+  flex-direction: column; /* Stack children vertically */
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
+  padding: 2rem; /* 32px padding on all sides */
+  background-color: #f9fafb; /* Light gray background */
+}
+
+/* BLOCK: Content wrapper styles */
+/* Constrains content width for better readability */
+.content-wrapper {
+  width: 100%; /* Full width of parent */
+  max-width: 42rem; /* Max 672px for readability */
+}
+
+/* Narrower wrapper for forms */
+.content-wrapper-narrow {
+  width: 100%; /* Full width of parent */
+  max-width: 28rem; /* Max 448px for forms */
+}
+
+/* BLOCK: Typography styles */
+/* Main page heading */
+.page-title {
+  font-size: 2.25rem; /* 36px */
+  font-weight: bold; /* Bold text */
+  margin-bottom: 2rem; /* 32px bottom margin */
+  text-align: center; /* Center text */
+  color: #111827; /* Dark gray */
+}
+
+/* Smaller page heading */
+.page-title-sm {
+  font-size: 1.875rem; /* 30px */
+  font-weight: bold; /* Bold text */
+  margin-bottom: 1.5rem; /* 24px bottom margin */
+  text-align: center; /* Center text */
+  color: #111827; /* Dark gray */
+}
+
+/* BLOCK: Card styles */
+/* White card container with shadow and border */
+.card {
+  background-color: #ffffff; /* White background */
+  padding: 1.5rem; /* 24px padding */
+  border-radius: 0.5rem; /* 8px rounded corners */
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); /* Small shadow */
+  border: 1px solid #e5e7eb; /* Light gray border */
+}
+
+/* BLOCK: Form styles */
+/* Form container with vertical layout */
+.form {
+  display: flex; /* Flexbox layout */
+  flex-direction: column; /* Stack children vertically */
+  gap: 1rem; /* 16px spacing between children */
+}
+
+/* Form field container */
+.form-field {
+  display: flex; /* Flexbox layout */
+  flex-direction: column; /* Stack label and input vertically */
+}
+
+/* Form label */
+.form-label {
+  margin-bottom: 0.375rem; /* 6px bottom margin */
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500; /* Medium weight */
+  color: #374151; /* Dark gray */
+}
+
+/* Form input field */
+.form-input {
+  padding: 0.625rem; /* 10px padding */
+  border: 1px solid #d1d5db; /* Gray border */
+  border-radius: 0.375rem; /* 6px rounded corners */
+}
+
+/* Input focus state - blue ring */
+.form-input:focus {
+  outline: none; /* Remove default outline */
+  box-shadow: 0 0 0 2px #3b82f6; /* 2px blue ring */
+  border-color: transparent; /* Hide border when focused */
+}
+
+/* Form submit button */
+.form-button {
+  margin-top: 0.5rem; /* 8px top margin */
+  padding: 0.625rem; /* 10px padding */
+  background-color: #3b82f6; /* Blue background */
+  color: #ffffff; /* White text */
+  font-weight: 500; /* Medium weight */
+  border-radius: 0.375rem; /* 6px rounded corners */
+  border: none; /* No border */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.2s; /* Smooth color transition */
+}
+
+/* Button hover state - darker blue */
+.form-button:hover {
+  background-color: #2563eb; /* Darker blue */
+}
+
+/* BLOCK: List styles */
+/* List container with spacing */
+.tutor-list {
+  display: flex; /* Flexbox layout */
+  flex-direction: column; /* Stack items vertically */
+  gap: 0.75rem; /* 12px spacing between items */
+}
+
+/* Individual list item card */
+.tutor-item {
+  padding: 1rem; /* 16px padding */
+  background-color: #ffffff; /* White background */
+  border-radius: 0.5rem; /* 8px rounded corners */
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); /* Small shadow */
+  border: 1px solid #e5e7eb; /* Light gray border */
+}
+
+/* Tutor name text */
+.tutor-name {
+  font-weight: 500; /* Medium weight */
+  color: #111827; /* Dark gray */
+}
+
+/* Tutor subject text */
+.tutor-subject {
+  font-size: 0.875rem; /* 14px */
+  color: #4b5563; /* Medium gray */
+}
+
+/* Empty state message */
+.empty-message {
+  text-align: center; /* Center text */
+  color: #4b5563; /* Medium gray */
 }
