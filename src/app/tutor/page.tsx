@@ -7,6 +7,7 @@ import { useState } from "react";
 export default function Home() {
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
+  const [bio, setBio] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,13 +17,14 @@ export default function Home() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, subject }),
+      body: JSON.stringify({ name, subject, bio }),
     });
 
     if (res.ok) {
       alert("Form submitted successfully!");
       setName("");
       setSubject("");
+      setBio("");
     } else {
       alert("Form submission failed.");
     }
@@ -60,6 +62,21 @@ export default function Home() {
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               className="form-input"
+              required
+            />
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="bio" className="form-label">
+              Bio
+            </label>
+
+            <textarea
+              id="bio"
+              value={bio}
+              className="form-input"
+              placeholder="Describe yourself briefly"
+              onChange={(e) => setBio(e.target.value)}
               required
             />
           </div>
