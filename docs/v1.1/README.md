@@ -1,6 +1,6 @@
-# 3allemni v2.0 Documentation
+# 3allemni v1.1 Documentation
 
-## Improvements
+## Improvements and Additions
 
 1. **Landing Page:** The landing now prompts the user to answer (upon landing): Are you a tutor or a student/parent? With 2 options (dropdown): tutor, student/parent, and a submit button. After the user submits, they are redirected to their corresponding page: if student/parent: redirect to /student. If tutor: redirect to /tutor.
 
