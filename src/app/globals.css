@@ -1,27 +1,15 @@
-/* src/app/global.css
+/* src/app/globals.css */
 
 /* Import Tailwind CSS base styles */
 @import "tailwindcss";
 
-/* CSS Variables for theming */
-:root {
-  --background: #ffffff; /* White background */
-  --foreground: #171717; /* Dark gray text */
-}
-
-/* Tailwind theme configuration */
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
 /* Global body styles */
 body {
-  background: var(--background); /* Apply background color */
-  color: var(--foreground); /* Apply text color */
+  background: #ffffff; /* White background */
+  color: #171717; /* Dark gray text */
   font-family: Arial, Helvetica, sans-serif; /* Default font */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
 }
 
 /* BLOCK: Page container styles */
@@ -33,7 +21,11 @@ body {
   align-items: center; /* Center horizontally */
   justify-content: center; /* Center vertically */
   padding: 2rem; /* 32px padding on all sides */
-  background-color: #f9fafb; /* Light gray background */
+  background: linear-gradient(
+    to bottom right,
+    #eff6ff,
+    #e0e7ff
+  ); /* Blue gradient matching landing page */
 }
 
 /* BLOCK: Content wrapper styles */
@@ -72,9 +64,9 @@ body {
 /* White card container with shadow and border */
 .card {
   background-color: #ffffff; /* White background */
-  padding: 1.5rem; /* 24px padding */
-  border-radius: 0.5rem; /* 8px rounded corners */
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); /* Small shadow */
+  padding: 2rem; /* 32px padding */
+  border-radius: 0.75rem; /* 12px rounded corners */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* Medium shadow */
   border: 1px solid #e5e7eb; /* Light gray border */
 }
 
@@ -83,7 +75,7 @@ body {
 .form {
   display: flex; /* Flexbox layout */
   flex-direction: column; /* Stack children vertically */
-  gap: 1rem; /* 16px spacing between children */
+  gap: 1.25rem; /* 20px spacing between children */
 }
 
 /* Form field container */
@@ -114,6 +106,14 @@ body {
   border-color: transparent; /* Hide border when focused */
 }
 
+/* Textarea specific styles */
+textarea.form-input {
+  min-height: 6rem; /* 96px minimum height */
+  resize: vertical; /* Allow vertical resizing only */
+  font-family: inherit; /* Use same font as rest of page */
+  line-height: 1.5; /* Better readability */
+}
+
 /* Form submit button */
 .form-button {
   margin-top: 0.5rem; /* 8px top margin */
@@ -137,32 +137,161 @@ body {
 .tutor-list {
   display: flex; /* Flexbox layout */
   flex-direction: column; /* Stack items vertically */
-  gap: 0.75rem; /* 12px spacing between items */
+  gap: 1rem; /* 16px spacing between items */
+  list-style: none; /* Remove default list bullets */
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
 }
 
 /* Individual list item card */
 .tutor-item {
-  padding: 1rem; /* 16px padding */
+  padding: 1.25rem; /* 20px padding */
   background-color: #ffffff; /* White background */
-  border-radius: 0.5rem; /* 8px rounded corners */
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); /* Small shadow */
+  border-radius: 0.75rem; /* 12px rounded corners */
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); /* Small shadow */
   border: 1px solid #e5e7eb; /* Light gray border */
+  transition: all 0.2s; /* Smooth transitions */
+}
+
+/* Tutor item hover state */
+.tutor-item:hover {
+  transform: translateY(-2px); /* Lift up slightly */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* Medium shadow */
+  border-color: #cbd5e1; /* Slightly darker border */
 }
 
 /* Tutor name text */
 .tutor-name {
-  font-weight: 500; /* Medium weight */
+  font-weight: 600; /* Semi-bold */
+  font-size: 1.125rem; /* 18px */
   color: #111827; /* Dark gray */
+  margin-bottom: 0.25rem; /* 4px bottom margin */
 }
 
 /* Tutor subject text */
 .tutor-subject {
   font-size: 0.875rem; /* 14px */
   color: #4b5563; /* Medium gray */
+  margin-bottom: 0.5rem; /* 8px bottom margin */
+}
+
+/* Tutor bio text */
+.tutor-bio {
+  font-size: 0.875rem; /* 14px */
+  color: #6b7280; /* Light gray */
+  line-height: 1.5; /* Better readability */
 }
 
 /* Empty state message */
 .empty-message {
   text-align: center; /* Center text */
   color: #4b5563; /* Medium gray */
+}
+
+/* BLOCK: Landing page specific styles */
+/* Landing page container with centered content */
+.landing-container {
+  display: flex; /* Flexbox layout */
+  min-height: 100vh; /* Full viewport height */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  background: linear-gradient(
+    to bottom right,
+    #eff6ff,
+    #e0e7ff
+  ); /* Blue gradient */
+  padding: 1rem; /* 16px padding */
+}
+
+/* Landing page content wrapper */
+.landing-content {
+  text-align: center; /* Center text */
+  background-color: #ffffff; /* White background */
+  padding: 3rem; /* 48px padding */
+  border-radius: 1rem; /* 16px rounded corners */
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1); /* Large shadow */
+  max-width: 28rem; /* Max 448px width */
+  width: 100%; /* Full width of parent */
+}
+
+/* Landing page main title */
+.landing-title {
+  font-size: 3rem; /* 48px */
+  font-weight: bold; /* Bold text */
+  color: #111827; /* Dark gray */
+  margin-bottom: 1.5rem; /* 24px bottom margin */
+  line-height: 1.2; /* Tight line height */
+}
+
+/* Landing page subtitle/description */
+.landing-text {
+  font-size: 1.125rem; /* 18px */
+  color: #4b5563; /* Medium gray */
+  margin-bottom: 2rem; /* 32px bottom margin */
+}
+
+/* Landing page select dropdown */
+.landing-select {
+  width: 100%; /* Full width */
+  padding: 0.75rem; /* 12px padding */
+  font-size: 1rem; /* 16px */
+  border: 2px solid #e5e7eb; /* Light gray border */
+  border-radius: 0.5rem; /* 8px rounded corners */
+  background-color: #ffffff; /* White background */
+  color: #111827; /* Dark text */
+  margin-top: 1rem; /* 16px top margin */
+  cursor: pointer; /* Pointer cursor */
+  transition: all 0.2s; /* Smooth transitions */
+}
+
+/* Select focus state */
+.landing-select:focus {
+  outline: none; /* Remove default outline */
+  border-color: #3b82f6; /* Blue border */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); /* Blue glow */
+}
+
+/* Landing page button */
+.landing-button {
+  width: 100%; /* Full width */
+  margin-top: 1.5rem; /* 24px top margin */
+  padding: 0.875rem; /* 14px padding */
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600; /* Semi-bold */
+  background-color: #3b82f6; /* Blue background */
+  color: #ffffff; /* White text */
+  border: none; /* No border */
+  border-radius: 0.5rem; /* 8px rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  transition: all 0.2s; /* Smooth transitions */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* Medium shadow */
+}
+
+/* Button hover state */
+.landing-button:hover {
+  background-color: #2563eb; /* Darker blue */
+  transform: translateY(-2px); /* Lift up slightly */
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); /* Larger shadow */
+}
+
+/* Button active/pressed state */
+.landing-button:active {
+  transform: translateY(0); /* Return to normal position */
+}
+
+/* BLOCK: Responsive design */
+/* Mobile adjustments for smaller screens */
+@media (max-width: 640px) {
+  .landing-title {
+    font-size: 2.25rem; /* 36px on mobile */
+  }
+
+  .landing-content {
+    padding: 2rem; /* 32px on mobile */
+  }
+
+  .page-container {
+    padding: 1rem; /* 16px on mobile */
+  }
 }

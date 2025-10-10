@@ -19,26 +19,20 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="text-center">
-        <h1 className="text-6xl font-bold text-gray-900 mb-4">
-          Welcome to 3allemni!
-        </h1>
-        <p className="text-xl text-gray-600">
-          Are you a tutor or a student/parent?
-          <select
-            className="form-input"
-            value={userType}
-            onChange={(e) => setUserType(e.target.value)}>
-            <option value="Tutor">Tutor</option>
-            <option value="Student">Student</option>
-          </select>
-        </p>
-        <div className="user-type">
-          <button className="form-input" onClick={handleNext}>
-            Next
-          </button>
-        </div>
+    <div className="landing-container">
+      <div className="landing-content">
+        <h1 className="landing-title">Welcome to 3allemni!</h1>
+        <p className="landing-text">Are you a tutor or a student/parent?</p>
+        <select
+          className="landing-select"
+          value={userType}
+          onChange={(e) => setUserType(e.target.value)}>
+          <option value="Tutor">Tutor</option>
+          <option value="Student">Student</option>
+        </select>
+        <button className="landing-button" onClick={handleNext}>
+          Next
+        </button>
       </div>
     </div>
   );
