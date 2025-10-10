@@ -46,3 +46,4 @@ db.json
 /src/generated/prisma
 prisma/migrations
 .gemini/
+.genkit/

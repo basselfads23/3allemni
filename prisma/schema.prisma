@@ -23,5 +23,6 @@ model Tutor {
   id      Int    @id @default(autoincrement())  // Primary key, auto-increments (1, 2, 3...)
   name    String  // Text field for tutor's name
   subject String  // Text field for subject they teach
+  bio     String?
 }
 // The model creates a table with 3 columns: id, name, and subject

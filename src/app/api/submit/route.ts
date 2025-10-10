@@ -37,17 +37,26 @@ export async function POST(req: NextRequest) {
     console.log("🔵 [API] Request body parsed:", body);
 
     // Extract name and subject fields using destructuring
-    const { name, subject } = body; // Destructuring: extracts name and subject properties from body object into separate variables
-    console.log("🔵 [API] Extracted fields - name:", name, "subject:", subject);
+    const { name, subject, bio } = body; // Destructuring: extracts name and subject properties from body object into separate variables
+    console.log(
+      "🔵 [API] Extracted fields - name:",
+      name,
+      "subject:",
+      subject,
+      "bio:",
+      bio
+    );
 
     // BLOCK: Validate required fields
     // Check if both name and subject are provided
-    if (!name || !subject) {
+    if (!name || !subject || !bio) {
       // !name: true if name is undefined, null, or empty string
       // ||: logical OR operator
       console.log("🔴 [API] Validation failed - missing fields");
       // Returns error response if validation fails
-      return new NextResponse("Name and subject are required", { status: 400 });
+      return new NextResponse("Name, subject, and bio are required", {
+        status: 400,
+      });
       // new NextResponse(): creates HTTP response
       // First argument: response body (error message string)
       // status: 400 means Bad Request (client error)
@@ -57,7 +66,10 @@ export async function POST(req: NextRequest) {
     // Create new tutor record in Neon database using Prisma
     console.log("🔵 [API] Attempting to create tutor in database...");
     console.log("🔵 [API] DATABASE_URL exists:", !!process.env.DATABASE_URL);
-    console.log("🔵 [API] DATABASE_URL starts with:", process.env.DATABASE_URL?.substring(0, 20));
+    console.log(
+      "🔵 [API] DATABASE_URL starts with:",
+      process.env.DATABASE_URL?.substring(0, 20)
+    );
 
     const tutor = await prisma.tutor.create({
       // await: waits for database operation to complete
@@ -68,6 +80,7 @@ export async function POST(req: NextRequest) {
         // data property: contains fields to insert into database
         name, // Shorthand for name: name (tutor's name from request)
         subject, // Shorthand for subject: subject (subject they teach from request)
+        bio, // Shorthand for bio: bio (tutor's bio from request)
       },
     });
     // Returns created record with auto-generated id from database
@@ -91,9 +104,10 @@ export async function POST(req: NextRequest) {
     console.error("🔴 [API] Full error object:", error);
 
     // Return detailed error in development, generic in production
-    const errorMessage = process.env.NODE_ENV === "development"
-      ? `Error: ${(error as Error).message}`
-      : "Internal server error";
+    const errorMessage =
+      process.env.NODE_ENV === "development"
+        ? `Error: ${(error as Error).message}`
+        : "Internal server error";
 
     return new NextResponse(errorMessage, { status: 500 });
     // status: 500 means Internal Server Error (server-side error)

@@ -11,6 +11,7 @@ import { useEffect, useState } from "react"; // useEffect runs code after render
 interface Tutor {
   name: string; // Property: tutor's name must be a string
   subject: string; // Property: tutor's subject must be a string
+  bio?: string;
 }
 // This interface ensures we only work with valid Tutor objects throughout the component
 
@@ -91,11 +92,12 @@ export default function Home() {
                 <li key={index} className="tutor-item">
                   {/* List item card with styles from global.css, key helps React track items */}
 
-                  <p className="tutor-name">{tutor.name}</p>
-                  {/* Tutor name with styles from global.css */}
+                  <p className="tutor-name">Name: {tutor.name}</p>
 
-                  <p className="tutor-subject">{tutor.subject}</p>
+                  <p className="tutor-subject">Subject: {tutor.subject}</p>
                   {/* Subject with styles from global.css */}
+
+                  <p className="tutor-bio">Bio: {tutor.bio}</p>
                 </li>
               )
             )}
