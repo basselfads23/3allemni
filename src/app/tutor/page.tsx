@@ -56,14 +56,24 @@ export default function Home() {
               Subject
             </label>
 
-            <input
-              type="text"
+            <select
               id="subject"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               className="form-input"
-              required
-            />
+              required>
+              <option value="" hidden disabled>
+                Select a subject
+              </option>
+              <option value="Physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Biology">Biology</option>
+              <option value="Maths">Maths</option>
+              <option value="English">English</option>
+              <option value="French">French</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Social Sciences">Social Sciences</option>
+            </select>
           </div>
 
           <div className="form-field">
