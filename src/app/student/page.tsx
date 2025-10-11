@@ -5,15 +5,11 @@
 
 // Import React hooks for managing state and side effects
 import { useEffect, useState } from "react"; // useEffect runs code after render, useState manages component state
+import Link from "next/link"; // Link: Next.js component for client-side navigation (no page reload)
 
-// BLOCK: TypeScript interface definition
-// This defines the shape/structure of a Tutor object for type safety
-interface Tutor {
-  name: string; // Property: tutor's name must be a string
-  subject: string; // Property: tutor's subject must be a string
-  bio?: string;
-}
-// This interface ensures we only work with valid Tutor objects throughout the component
+// BLOCK: Import Tutor type from validations
+// Import the Tutor type (includes id) for database records
+import { Tutor } from "@/lib/validations"; // @/ is alias for src/, imports the type definition with id field
 
 // BLOCK: Main component function
 // This is the Student page component that displays all tutors from the database
@@ -22,8 +18,12 @@ export default function Home() {
 
   // BLOCK: State management
   // Create state variable to store array of tutors fetched from database
-  const [tutors, setTutors] = useState<Tutor[]>([]); // useState hook: tutors is the value, setTutors updates it, <Tutor[]> means array of Tutor objects, [] is initial empty array
+  const [tutors, setTutors] = useState<Tutor[]>([]); // useState hook: tutors is the value, setTutors updates it, <Tutor[]> means array of Tutor objects (with id), [] is initial empty array
   // This state will hold all tutors and trigger re-render when updated
+
+  // State variable to store the currently selected subject filter
+  const [selectedSubject, setSelectedSubject] = useState<string>("All Subjects"); // useState<string>: stores a string value, default is "All Subjects" (shows all tutors)
+  // When user selects a subject from dropdown, this state updates and triggers re-render with filtered tutors
 
   // BLOCK: Side effect - fetch data when component mounts
   // useEffect runs code after the component renders on the page
@@ -66,6 +66,16 @@ export default function Home() {
   }, []); // Empty dependency array [] means this effect runs only once when component first loads
   // This useEffect block fetches tutors from the API when the page loads
 
+  // BLOCK: Filter logic
+  // Filter tutors based on selected subject
+  const filteredTutors =
+    selectedSubject === "All Subjects" // Check if "All Subjects" is selected
+      ? tutors // If yes, show all tutors (no filtering)
+      : tutors.filter((tutor) => tutor.subject === selectedSubject); // If no, filter tutors array to only include tutors whose subject matches selectedSubject
+  // .filter() creates a new array containing only elements that pass the test
+  // (tutor) => tutor.subject === selectedSubject: arrow function that returns true if tutor's subject matches selected subject
+  // Result: filteredTutors contains only tutors teaching the selected subject
+
   // BLOCK: JSX rendering - what gets displayed on the page
   return (
     // return statement sends JSX to be rendered
@@ -78,29 +88,62 @@ export default function Home() {
         <h1 className="page-title">Tutor Profiles</h1>
         {/* Page heading with styles from global.css */}
 
+        {/* BLOCK: Subject filter dropdown */}
+        {/* Dropdown menu to filter tutors by subject */}
+        <div className="filter-container">
+          {/* Container div for filter dropdown */}
+          <label htmlFor="subject-filter" className="filter-label">
+            Filter by Subject:
+          </label>
+          {/* Label for the dropdown */}
+
+          <select
+            id="subject-filter"
+            value={selectedSubject} // Controlled input: value comes from state
+            onChange={(e) => setSelectedSubject(e.target.value)} // When user selects option, update state with new value
+            className="filter-select">
+            {/* onChange: event handler that runs when selection changes */}
+            {/* e.target.value: the value of the selected option */}
+
+            <option value="All Subjects">All Subjects</option>
+            {/* Default option to show all tutors */}
+
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Biology">Biology</option>
+            <option value="Maths">Maths</option>
+            <option value="English">English</option>
+            <option value="French">French</option>
+            <option value="Arabic">Arabic</option>
+            <option value="Social Sciences">Social Sciences</option>
+            {/* Each option's value attribute is used for filtering */}
+          </select>
+        </div>
+
         {/* Conditional rendering: show list if tutors exist, otherwise show message */}
-        {tutors.length > 0 ? ( // Ternary operator: condition ? ifTrue : ifFalse, .length gets array size
+        {filteredTutors.length > 0 ? ( // Use filteredTutors instead of tutors - only shows tutors matching selected subject
           <ul className="tutor-list">
             {/* Unordered list with spacing styles from global.css */}
 
-            {/* Loop through tutors array and create list item for each */}
-            {tutors.map(
-              (
-                tutor,
-                index // .map() loops through array, tutor is current item, index is position
-              ) => (
-                <li key={index} className="tutor-item">
-                  {/* List item card with styles from global.css, key helps React track items */}
+            {/* Loop through filtered tutors array and create list item for each */}
+            {filteredTutors.map((tutor: Tutor) => (
+              // .map() loops through array, tutor is current item typed as Tutor
+              <li key={tutor.id} className="tutor-item">
+                {/* key={tutor.id}: use unique id instead of index for better React performance */}
+                {/* List item card with styles from global.css */}
+
+                <Link href={`/tutors/${tutor.id}`} className="tutor-link">
+                  {/* Link component for navigation without page reload */}
+                  {/* href: destination URL - template literal creates /tutors/1, /tutors/2, etc. */}
+                  {/* tutor.id: dynamic part of the URL */}
 
                   <p className="tutor-name">Name: {tutor.name}</p>
 
                   <p className="tutor-subject">Subject: {tutor.subject}</p>
                   {/* Subject with styles from global.css */}
-
-                  <p className="tutor-bio">Bio: {tutor.bio}</p>
-                </li>
-              )
-            )}
+                </Link>
+              </li>
+            ))}
           </ul>
         ) : (
           // else clause of ternary
