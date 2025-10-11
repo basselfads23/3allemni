@@ -10,6 +10,7 @@ import { useEffect, useState } from "react"; // useEffect runs code after render
 // This defines the shape/structure of a Tutor object for type safety
 interface Tutor {
   name: string; // Property: tutor's name must be a string
+  email: string;
   subject: string; // Property: tutor's subject must be a string
   bio?: string;
 }

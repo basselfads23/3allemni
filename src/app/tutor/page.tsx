@@ -6,6 +6,7 @@ import { useState } from "react";
 
 export default function Home() {
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [bio, setBio] = useState("");
 
@@ -17,12 +18,13 @@ export default function Home() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, subject, bio }),
+      body: JSON.stringify({ name, email, subject, bio }),
     });
 
     if (res.ok) {
       alert("Form submitted successfully!");
       setName("");
+      setEmail("");
       setSubject("");
       setBio("");
     } else {
@@ -46,6 +48,21 @@ export default function Home() {
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className="form-input"
+              required
+            />
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="email" className="form-label">
+              Email
+            </label>
+
+            <input
+              type="text"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="form-input"
               required
             />
@@ -87,7 +104,6 @@ export default function Home() {
               className="form-input"
               placeholder="Describe yourself briefly"
               onChange={(e) => setBio(e.target.value)}
-              required
             />
           </div>
 

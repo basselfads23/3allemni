@@ -37,10 +37,12 @@ export async function POST(req: NextRequest) {
     console.log("🔵 [API] Request body parsed:", body);
 
     // Extract name and subject fields using destructuring
-    const { name, subject, bio } = body; // Destructuring: extracts name and subject properties from body object into separate variables
+    const { name, email, subject, bio } = body; // Destructuring: extracts name and subject properties from body object into separate variables
     console.log(
       "🔵 [API] Extracted fields - name:",
       name,
+      "email:",
+      email,
       "subject:",
       subject,
       "bio:",
@@ -49,12 +51,12 @@ export async function POST(req: NextRequest) {
 
     // BLOCK: Validate required fields
     // Check if both name and subject are provided
-    if (!name || !subject || !bio) {
+    if (!name || !subject || !email) {
       // !name: true if name is undefined, null, or empty string
       // ||: logical OR operator
       console.log("🔴 [API] Validation failed - missing fields");
       // Returns error response if validation fails
-      return new NextResponse("Name, subject, and bio are required", {
+      return new NextResponse("Name, email, and subject are required", {
         status: 400,
       });
       // new NextResponse(): creates HTTP response
@@ -79,6 +81,7 @@ export async function POST(req: NextRequest) {
       data: {
         // data property: contains fields to insert into database
         name, // Shorthand for name: name (tutor's name from request)
+        email,
         subject, // Shorthand for subject: subject (subject they teach from request)
         bio, // Shorthand for bio: bio (tutor's bio from request)
       },
