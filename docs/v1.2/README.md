@@ -12,7 +12,7 @@
 - To enable students to contact tutors, a new **Email** field (required) will be added to the tutor registration form, appearing below the "Name" field.
 - The backend and database schema will be updated to store this new information.
 
-### 3. Student Page (`/student`): Filtering
+### 3. Student Page (`/student`): Filtering (**DONE**)
 
 - To enhance usability, a filter mechanism will be added to the student dashboard.
 - A dropdown menu will allow students to select a subject and view only the tutors who teach it. An "All Subjects" option will be included to clear the filter.

@@ -60,6 +60,42 @@ body {
   color: #111827; /* Dark gray */
 }
 
+/* BLOCK: Filter styles */
+/* Container for filter dropdown with spacing */
+.filter-container {
+  display: flex; /* Flexbox layout */
+  align-items: center; /* Vertically center label and dropdown */
+  gap: 0.75rem; /* 12px spacing between label and dropdown */
+  margin-bottom: 1.5rem; /* 24px bottom margin to separate from tutor list */
+  justify-content: center; /* Center horizontally */
+}
+
+/* Filter label text */
+.filter-label {
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 500; /* Medium weight */
+  color: #374151; /* Dark gray */
+}
+
+/* Filter dropdown select element */
+.filter-select {
+  padding: 0.5rem 0.75rem; /* 8px top/bottom, 12px left/right */
+  font-size: 0.9375rem; /* 15px */
+  border: 1px solid #d1d5db; /* Gray border */
+  border-radius: 0.375rem; /* 6px rounded corners */
+  background-color: #ffffff; /* White background */
+  color: #111827; /* Dark text */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: all 0.2s; /* Smooth transitions */
+}
+
+/* Filter dropdown focus state - blue border */
+.filter-select:focus {
+  outline: none; /* Remove default outline */
+  border-color: #3b82f6; /* Blue border */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); /* Blue glow */
+}
+
 /* BLOCK: Card styles */
 /* White card container with shadow and border */
 .card {
@@ -153,7 +189,6 @@ textarea.form-input {
 
 /* Individual list item card */
 .tutor-item {
-  padding: 1.25rem; /* 20px padding */
   background-color: #ffffff; /* White background */
   border-radius: 0.75rem; /* 12px rounded corners */
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); /* Small shadow */
@@ -166,6 +201,15 @@ textarea.form-input {
   transform: translateY(-2px); /* Lift up slightly */
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* Medium shadow */
   border-color: #cbd5e1; /* Slightly darker border */
+}
+
+/* Link wrapper for tutor cards - makes entire card clickable */
+.tutor-link {
+  display: block; /* Makes link fill entire card */
+  padding: 1.25rem; /* 20px padding */
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Use parent text color */
+  cursor: pointer; /* Show pointer cursor */
 }
 
 /* Tutor name text */
@@ -194,6 +238,110 @@ textarea.form-input {
 .empty-message {
   text-align: center; /* Center text */
   color: #4b5563; /* Medium gray */
+}
+
+/* BLOCK: Profile page styles */
+/* Back link to return to tutor list */
+.back-link {
+  display: inline-block; /* Allows margin and makes clickable area proper size */
+  margin-bottom: 1.5rem; /* 24px bottom margin */
+  color: #3b82f6; /* Blue text */
+  text-decoration: none; /* No underline */
+  font-weight: 500; /* Medium weight */
+  font-size: 0.9375rem; /* 15px */
+  transition: color 0.2s; /* Smooth color transition */
+}
+
+/* Back link hover state */
+.back-link:hover {
+  color: #2563eb; /* Darker blue on hover */
+}
+
+/* Profile card container */
+.profile-card {
+  text-align: center; /* Center all content */
+}
+
+/* Tutor name on profile page */
+.profile-name {
+  font-size: 2.25rem; /* 36px */
+  font-weight: bold; /* Bold text */
+  color: #111827; /* Dark gray */
+  margin-bottom: 1rem; /* 16px bottom margin */
+}
+
+/* Subject badge on profile */
+.profile-subject-badge {
+  display: inline-block; /* Allows padding and makes badge size proper */
+  padding: 0.5rem 1rem; /* 8px top/bottom, 16px left/right */
+  background-color: #dbeafe; /* Light blue background */
+  color: #1e40af; /* Dark blue text */
+  border-radius: 9999px; /* Fully rounded (pill shape) */
+  font-weight: 600; /* Semi-bold */
+  font-size: 0.875rem; /* 14px */
+  margin-bottom: 2rem; /* 32px bottom margin */
+}
+
+/* Container for profile details */
+.profile-details {
+  text-align: left; /* Left-align text inside details */
+  margin-top: 2rem; /* 32px top margin */
+}
+
+/* Individual detail item (email, bio) */
+.profile-detail-item {
+  margin-bottom: 1.5rem; /* 24px bottom margin between items */
+}
+
+/* Label for detail items (Email:, About:) */
+.profile-detail-label {
+  display: block; /* Makes label take full width */
+  font-weight: 600; /* Semi-bold */
+  color: #374151; /* Dark gray */
+  margin-bottom: 0.5rem; /* 8px bottom margin */
+  font-size: 0.875rem; /* 14px */
+  text-transform: uppercase; /* UPPERCASE TEXT */
+  letter-spacing: 0.05em; /* Slightly spaced letters */
+}
+
+/* Email link styling */
+.profile-email {
+  color: #3b82f6; /* Blue text */
+  text-decoration: none; /* No underline */
+  font-size: 1.125rem; /* 18px */
+  transition: color 0.2s; /* Smooth color transition */
+}
+
+/* Email link hover state */
+.profile-email:hover {
+  color: #2563eb; /* Darker blue on hover */
+  text-decoration: underline; /* Add underline on hover */
+}
+
+/* Bio text on profile */
+.profile-bio {
+  color: #4b5563; /* Medium gray */
+  line-height: 1.6; /* Comfortable reading line height */
+  font-size: 1rem; /* 16px */
+}
+
+/* Loading message */
+.loading-message {
+  text-align: center; /* Center text */
+  color: #6b7280; /* Gray text */
+  font-size: 1.125rem; /* 18px */
+}
+
+/* Error card */
+.error-card {
+  text-align: center; /* Center text */
+}
+
+/* Error text */
+.error-text {
+  color: #dc2626; /* Red text */
+  margin-bottom: 1.5rem; /* 24px bottom margin */
+  font-size: 1rem; /* 16px */
 }
 
 /* BLOCK: Landing page specific styles */
