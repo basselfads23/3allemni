@@ -16,6 +16,9 @@ import { NextRequest, NextResponse } from "next/server"; // NextRequest: typed r
 // Import Prisma client instance to interact with database
 import { prisma } from "@/lib/prisma"; // @/ is path alias for src/, prisma is singleton client instance
 
+// Import Zod validation schema
+import { tutorSchema } from "@/lib/validations"; // Import validation rules to check data before saving to database
+
 // BLOCK: POST Handler Function
 // Export async function to handle POST requests to /api/submit endpoint
 export async function POST(req: NextRequest) {
@@ -49,20 +52,35 @@ export async function POST(req: NextRequest) {
       bio
     );
 
-    // BLOCK: Validate required fields
-    // Check if both name and subject are provided
-    if (!name || !subject || !email) {
-      // !name: true if name is undefined, null, or empty string
-      // ||: logical OR operator
-      console.log("🔴 [API] Validation failed - missing fields");
-      // Returns error response if validation fails
-      return new NextResponse("Name, email, and subject are required", {
-        status: 400,
-      });
-      // new NextResponse(): creates HTTP response
-      // First argument: response body (error message string)
-      // status: 400 means Bad Request (client error)
+    // BLOCK: Validate data with Zod schema
+    // Use Zod to validate the request body against our schema rules
+    console.log("🔵 [API] Validating data with Zod...");
+    const validation = tutorSchema.safeParse(body);
+    // safeParse(): validates data without throwing errors
+    // Returns: { success: true, data: validatedData } OR { success: false, error: zodError }
+
+    // Check if validation failed
+    if (!validation.success) {
+      // !validation.success means data doesn't match our schema rules
+      console.log("🔴 [API] Validation failed:", validation.error);
+
+      // Extract first error message to show to client
+      const firstError = validation.error.issues[0]; // Get first validation error from array
+      const errorMessage = `${firstError.path.join(".")}: ${firstError.message}`;
+      // firstError.path: field that failed (e.g., ["email"])
+      // firstError.message: error message (e.g., "Please enter a valid email address")
+      // .join("."): converts ["email"] to "email"
+
+      console.log("🔴 [API] Error message:", errorMessage);
+      return new NextResponse(errorMessage, { status: 400 });
+      // status: 400 means Bad Request (client sent invalid data)
     }
+
+    // If we reach here, validation passed!
+    // Use the validated data (Zod has cleaned and type-checked it)
+    const validatedData = validation.data;
+    // validation.data: contains the validated and type-safe data
+    console.log("🟢 [API] Validation passed, data is valid:", validatedData);
 
     // BLOCK: Database operation - Create tutor record
     // Create new tutor record in Neon database using Prisma
@@ -80,10 +98,11 @@ export async function POST(req: NextRequest) {
 
       data: {
         // data property: contains fields to insert into database
-        name, // Shorthand for name: name (tutor's name from request)
-        email,
-        subject, // Shorthand for subject: subject (subject they teach from request)
-        bio, // Shorthand for bio: bio (tutor's bio from request)
+        // Use validatedData instead of raw request body for security
+        name: validatedData.name, // Validated name from Zod
+        email: validatedData.email, // Validated email (guaranteed to be valid email format)
+        subject: validatedData.subject, // Validated subject
+        bio: validatedData.bio, // Validated bio (can be undefined since it's optional)
       },
     });
     // Returns created record with auto-generated id from database

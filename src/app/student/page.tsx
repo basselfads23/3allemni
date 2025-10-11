@@ -6,15 +6,9 @@
 // Import React hooks for managing state and side effects
 import { useEffect, useState } from "react"; // useEffect runs code after render, useState manages component state
 
-// BLOCK: TypeScript interface definition
-// This defines the shape/structure of a Tutor object for type safety
-interface Tutor {
-  name: string; // Property: tutor's name must be a string
-  email: string;
-  subject: string; // Property: tutor's subject must be a string
-  bio?: string;
-}
-// This interface ensures we only work with valid Tutor objects throughout the component
+// BLOCK: Import Tutor type from validations
+// Import the type we created in validations.ts instead of duplicating it here
+import { TutorFormData } from "@/lib/validations"; // @/ is alias for src/, imports the type definition
 
 // BLOCK: Main component function
 // This is the Student page component that displays all tutors from the database
@@ -23,7 +17,7 @@ export default function Home() {
 
   // BLOCK: State management
   // Create state variable to store array of tutors fetched from database
-  const [tutors, setTutors] = useState<Tutor[]>([]); // useState hook: tutors is the value, setTutors updates it, <Tutor[]> means array of Tutor objects, [] is initial empty array
+  const [tutors, setTutors] = useState<TutorFormData[]>([]); // useState hook: tutors is the value, setTutors updates it, <TutorFormData[]> means array of TutorFormData objects, [] is initial empty array
   // This state will hold all tutors and trigger re-render when updated
 
   // BLOCK: Side effect - fetch data when component mounts
@@ -87,7 +81,7 @@ export default function Home() {
             {/* Loop through tutors array and create list item for each */}
             {tutors.map(
               (
-                tutor,
+                tutor: TutorFormData, // tutor is typed as TutorFormData
                 index // .map() loops through array, tutor is current item, index is position
               ) => (
                 <li key={index} className="tutor-item">

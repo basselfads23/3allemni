@@ -2,12 +2,12 @@
 
 ## Improvements and Additions
 
-### 1. Application Metadata Update
+### 1. Application Metadata Update (**DONE**)
 
 - The browser tab title will be updated from "Create Next App" to "3allemni".
 - A placeholder icon will be added to replace the default favicon. The final logo can be implemented in a future version.
 
-### 2. Tutor Page (`/tutor`): Add Contact Information
+### 2. Tutor Page (`/tutor`): Add Contact Information (**DONE**)
 
 - To enable students to contact tutors, a new **Email** field (required) will be added to the tutor registration form, appearing below the "Name" field.
 - The backend and database schema will be updated to store this new information.
