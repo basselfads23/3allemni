@@ -6,6 +6,7 @@
 // Import React hooks for managing state and side effects
 import { useEffect, useState } from "react"; // useEffect runs code after render, useState manages component state
 import Link from "next/link"; // Link: Next.js component for client-side navigation (no page reload)
+import Image from "next/image"; // Image: Next.js component for displaying images
 
 // BLOCK: Import Tutor type from validations
 // Import the Tutor type (includes id) for database records
@@ -22,7 +23,8 @@ export default function Home() {
   // This state will hold all tutors and trigger re-render when updated
 
   // State variable to store the currently selected subject filter
-  const [selectedSubject, setSelectedSubject] = useState<string>("All Subjects"); // useState<string>: stores a string value, default is "All Subjects" (shows all tutors)
+  const [selectedSubject, setSelectedSubject] =
+    useState<string>("All Subjects"); // useState<string>: stores a string value, default is "All Subjects" (shows all tutors)
   // When user selects a subject from dropdown, this state updates and triggers re-render with filtered tutors
 
   // BLOCK: Side effect - fetch data when component mounts
@@ -141,7 +143,7 @@ export default function Home() {
                   {/* Display profile picture if available, otherwise show placeholder with initials */}
                   {tutor.profilePictureUrl ? (
                     // If profile picture URL exists, show image
-                    <img
+                    <Image
                       src={tutor.profilePictureUrl}
                       alt={`${tutor.name}'s profile`}
                       className="tutor-thumbnail"
