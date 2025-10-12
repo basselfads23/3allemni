@@ -387,6 +387,13 @@ input[type="file"].form-input {
   letter-spacing: 0.05em; /* Slightly spaced letters */
 }
 
+/* Value text for detail items (price, location) */
+.profile-detail-value {
+  color: #111827; /* Dark gray */
+  font-size: 1.125rem; /* 18px */
+  font-weight: 500; /* Medium weight */
+}
+
 /* Email link styling */
 .profile-email {
   color: #3b82f6; /* Blue text */

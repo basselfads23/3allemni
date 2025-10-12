@@ -172,6 +172,24 @@ export default function TutorProfile() {
 
           {/* Details section */}
           <div className="profile-details">
+            {/* Price section - only show if price exists */}
+            {tutor.price && (
+              <div className="profile-detail-item">
+                <span className="profile-detail-label">Price:</span>
+                <p className="profile-detail-value">
+                  ${tutor.price.toFixed(2)}/hour
+                </p>
+              </div>
+            )}
+
+            {/* Location section - only show if location exists */}
+            {tutor.location && (
+              <div className="profile-detail-item">
+                <span className="profile-detail-label">Location:</span>
+                <p className="profile-detail-value">{tutor.location}</p>
+              </div>
+            )}
+
             {/* Email section */}
             <div className="profile-detail-item">
               <span className="profile-detail-label">Email:</span>
