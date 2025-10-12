@@ -27,3 +27,31 @@ To unify the application and improve navigation, a persistent header and footer 
   - It will contain the "3allemni" name/logo on the left.
   - It will include navigation links: "Find a Tutor" (`/student`) and "Become a Tutor" (`/tutor`).
 - **Layout (`layout.tsx`):** A simple global `Footer` component will be created with basic information (e.g., "© 2025 3allemni").
+
+## Updated Project Structure (**DONE**)
+
+```text
+3allemni/
+├── docs/                    # Documentation
+├── prisma/                 # Database configuration
+│   ├── schema.prisma      # Database schema definition
+│   └── migrations/        # Database migrations
+├── public/                # Static assets
+├── src/
+│   ├── app/              # Next.js App Router
+│   │   ├── api/         # API routes
+│   │   │   ├── submit/
+│   │   │   ├── tutor/[id]/
+│   │   │   └── tutors/
+│   │   ├── student/     # Student page
+│   │   ├── tutor/       # Tutor registration page
+│   │   ├── tutors/[id]  # Individual tutor profile pages
+│   │   ├── globals.css  # Global styles
+│   │   ├── layout.tsx   # Root layout
+│   │   └── page.tsx     # Landing page
+│   ├── components/      # React components
+│   └── lib/
+│       ├── prisma.ts    # Prisma client singleton
+│       └── validations.ts # Zod validation schemas
+└── package.json         # Dependencies and scripts
+```
