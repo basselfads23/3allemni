@@ -1,6 +1,6 @@
 # 3allemni v1.3 Documentation
 
-## 1. Tutor Profile Pictures
+## 1. Tutor Profile Pictures (**DONE**)
 
 To build trust and make the platform more personal, tutors will be able to add a profile picture.
 
@@ -9,7 +9,7 @@ To build trust and make the platform more personal, tutors will be able to add a
 - **Student Page (`/student`):** The tutor's profile picture will be displayed as a thumbnail next to their name in the list.
 - **Tutor Profile Page (`/tutor/[id]`):** The profile picture will be displayed prominently at the top of the tutor's detail page.
 
-## 2. Add Critical Information: Pricing and Location
+## 2. Add Critical Information: Pricing and Location (**DONE**)
 
 To help students make informed decisions, two new crucial fields will be added.
 
@@ -19,7 +19,7 @@ To help students make informed decisions, two new crucial fields will be added.
 - **Database:** The `Tutor` model in `schema.prisma` will be updated to include these new `price` and `location` fields.
 - **Student & Tutor Pages:** The price and location will be displayed on both the main student dashboard list and the individual tutor profile pages. The student page filtering will also be updated to allow filtering by location.
 
-## 3. UI/UX: Add a Consistent Navigation Bar and Footer
+## 3. UI/UX: Add a Consistent Navigation Bar and Footer (**DONE**)
 
 To unify the application and improve navigation, a persistent header and footer will be added.
 
