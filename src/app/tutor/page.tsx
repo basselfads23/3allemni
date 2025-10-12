@@ -16,6 +16,7 @@ export default function Home() {
   const [email, setEmail] = useState(""); // Holds the email input value
   const [subject, setSubject] = useState(""); // Holds the subject dropdown value
   const [bio, setBio] = useState(""); // Holds the bio textarea value
+  const [profilePicture, setProfilePicture] = useState<File | null>(null); // Holds the profile picture file (optional)
 
   // BLOCK: State for validation errors
   // This will store error messages from Zod validation
@@ -87,6 +88,7 @@ export default function Home() {
       setEmail("");
       setSubject("");
       setBio("");
+      setProfilePicture(null);
     } else {
       // If API returned error (400, 500, etc.)
       alert("Form submission failed."); // Show error message
@@ -179,6 +181,31 @@ export default function Home() {
               placeholder="Describe yourself briefly"
               onChange={(e) => setBio(e.target.value)}
             />
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="profilePicture" className="form-label">
+              Profile Picture (Optional)
+            </label>
+
+            <input
+              type="file"
+              id="profilePicture"
+              accept="image/*"
+              className="form-input"
+              onChange={(e) => {
+                // Get the first file from the file input (if any)
+                const file = e.target.files?.[0] || null;
+                setProfilePicture(file);
+              }}
+            />
+
+            {/* Display selected file name if a file is chosen */}
+            {profilePicture && (
+              <p style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "#4b5563" }}>
+                Selected: {profilePicture.name}
+              </p>
+            )}
           </div>
 
           <button type="submit" className="form-button">
