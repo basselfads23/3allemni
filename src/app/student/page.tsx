@@ -142,10 +142,12 @@ export default function Home() {
                   {/* BLOCK: Profile picture or placeholder */}
                   {/* Display profile picture if available, otherwise show placeholder with initials */}
                   {tutor.profilePictureUrl ? (
-                    // If profile picture URL exists, show image
+                    // If profile picture URL exists, show optimized image using Next.js Image component
                     <Image
                       src={tutor.profilePictureUrl}
                       alt={`${tutor.name}'s profile`}
+                      width={56}
+                      height={56}
                       className="tutor-thumbnail"
                     />
                   ) : (
@@ -159,9 +161,9 @@ export default function Home() {
                   {/* BLOCK: Tutor information */}
                   {/* Container for name and subject */}
                   <div className="tutor-info">
-                    <p className="tutor-name">Name: {tutor.name}</p>
+                    <p className="tutor-name">{tutor.name}</p>
 
-                    <p className="tutor-subject">Subject: {tutor.subject}</p>
+                    <p className="tutor-subject">{tutor.subject}</p>
                     {/* Subject with styles from global.css */}
                   </div>
                 </Link>
