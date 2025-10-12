@@ -44,9 +44,9 @@ export type TutorFormData = z.infer<typeof tutorSchema>;
 // Now we can use this type throughout our app for type checking
 
 // BLOCK: Database Tutor Type
-// Type for tutors fetched from database (includes auto-generated ID)
-export type Tutor = TutorFormData & { id: number };
+// Type for tutors fetched from database (includes auto-generated ID and profile picture URL)
+export type Tutor = TutorFormData & { id: number; profilePictureUrl?: string };
 // & is the "intersection" operator - combines two types
-// Takes all properties from TutorFormData AND adds { id: number }
-// Result: Tutor = { id: number; name: string; email: string; subject: string; bio?: string }
+// Takes all properties from TutorFormData AND adds { id: number; profilePictureUrl?: string }
+// Result: Tutor = { id: number; name: string; email: string; subject: string; bio?: string; profilePictureUrl?: string }
 // Use this type when working with tutors from the database

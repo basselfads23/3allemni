@@ -22,6 +22,10 @@ export default function Home() {
   // This will store error messages from Zod validation
   const [errors, setErrors] = useState<Record<string, string>>({}); // Record<string, string> means an object with string keys and string values, like { email: "Invalid email", name: "Too short" }
 
+  // BLOCK: State for file input reference
+  // Store reference to file input element so we can reset it programmatically
+  const [fileInputKey, setFileInputKey] = useState(0); // Key to force file input to re-render and clear
+
   // BLOCK: Form submission handler
   // This function runs when the user clicks the Submit button
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,9 +36,9 @@ export default function Home() {
     // Reset errors to empty object before validating
     setErrors({}); // Clears any old error messages from previous submission attempts
 
-    // BLOCK: Prepare form data
+    // BLOCK: Prepare form data for validation
     // Collect all form field values into one object
-    const formData = {
+    const validationData = {
       name, // Current value of name field
       email, // Current value of email field
       subject, // Current value of subject field
@@ -43,7 +47,7 @@ export default function Home() {
 
     // BLOCK: Validate form data with Zod
     // Use safeParse to check if data matches our schema rules
-    const result = tutorSchema.safeParse(formData);
+    const result = tutorSchema.safeParse(validationData);
     // safeParse returns an object with either:
     // - { success: true, data: validatedData } if validation passes
     // - { success: false, error: zodError } if validation fails
@@ -70,12 +74,22 @@ export default function Home() {
 
     // BLOCK: Submit validated data to API
     // If we reach here, validation passed! Now submit to backend
+    // Use FormData to send both text fields and file upload
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("subject", subject);
+    formData.append("bio", bio);
+
+    // Add profile picture file if one was selected
+    if (profilePicture) {
+      formData.append("profilePicture", profilePicture);
+    }
+
     const res = await fetch("/api/submit", {
       method: "POST", // HTTP method for creating/sending data
-      headers: {
-        "Content-Type": "application/json", // Tell server we're sending JSON
-      },
-      body: JSON.stringify({ name, email, subject, bio }), // Convert form data to JSON string
+      // Don't set Content-Type header - browser will set it automatically with boundary for multipart/form-data
+      body: formData, // Send FormData instead of JSON
     });
 
     // BLOCK: Handle API response
@@ -89,6 +103,7 @@ export default function Home() {
       setSubject("");
       setBio("");
       setProfilePicture(null);
+      setFileInputKey((prev) => prev + 1); // Reset file input by changing its key
     } else {
       // If API returned error (400, 500, etc.)
       alert("Form submission failed."); // Show error message
@@ -189,6 +204,7 @@ export default function Home() {
             </label>
 
             <input
+              key={fileInputKey}
               type="file"
               id="profilePicture"
               accept="image/*"

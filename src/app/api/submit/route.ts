@@ -3,7 +3,7 @@
 // This API route handles POST requests to submit new tutors to the database
 // Route URL: /api/submit
 // Method: POST
-// Request body: { name: string, subject: string }
+// Request body: FormData with name, email, subject, bio, and optional profilePicture file
 // Response: Returns created tutor object with 200, or error message with 400/500
 
 // CRITICAL: Force Node.js runtime (Prisma doesn't work in Edge runtime)
@@ -19,6 +19,9 @@ import { prisma } from "@/lib/prisma"; // @/ is path alias for src/, prisma is s
 // Import Zod validation schema
 import { tutorSchema } from "@/lib/validations"; // Import validation rules to check data before saving to database
 
+// Import Vercel Blob for file uploads
+import { put } from "@vercel/blob"; // put function uploads files to Vercel Blob storage
+
 // BLOCK: POST Handler Function
 // Export async function to handle POST requests to /api/submit endpoint
 export async function POST(req: NextRequest) {
@@ -33,14 +36,19 @@ export async function POST(req: NextRequest) {
   try {
     // try-catch block: handles errors gracefully and prevents crashes
 
-    // BLOCK: Parse and extract request data
-    // Parse JSON from request body
-    console.log("🔵 [API] Parsing request body...");
-    const body = await req.json(); // await: waits for JSON parsing to complete, req.json(): parses JSON string to JavaScript object
-    console.log("🔵 [API] Request body parsed:", body);
+    // BLOCK: Parse and extract request data from FormData
+    // Parse FormData from request body (contains both text fields and file)
+    console.log("🔵 [API] Parsing FormData from request...");
+    const formData = await req.formData(); // await: waits for FormData parsing to complete
+    console.log("🔵 [API] FormData parsed successfully");
 
-    // Extract name and subject fields using destructuring
-    const { name, email, subject, bio } = body; // Destructuring: extracts name and subject properties from body object into separate variables
+    // Extract text fields from FormData
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const subject = formData.get("subject") as string;
+    const bio = formData.get("bio") as string;
+    const profilePictureFile = formData.get("profilePicture") as File | null;
+
     console.log(
       "🔵 [API] Extracted fields - name:",
       name,
@@ -49,13 +57,15 @@ export async function POST(req: NextRequest) {
       "subject:",
       subject,
       "bio:",
-      bio
+      bio,
+      "has profile picture:",
+      !!profilePictureFile
     );
 
     // BLOCK: Validate data with Zod schema
-    // Use Zod to validate the request body against our schema rules
+    // Use Zod to validate the text fields against our schema rules
     console.log("🔵 [API] Validating data with Zod...");
-    const validation = tutorSchema.safeParse(body);
+    const validation = tutorSchema.safeParse({ name, email, subject, bio });
     // safeParse(): validates data without throwing errors
     // Returns: { success: true, data: validatedData } OR { success: false, error: zodError }
 
@@ -82,6 +92,32 @@ export async function POST(req: NextRequest) {
     // validation.data: contains the validated and type-safe data
     console.log("🟢 [API] Validation passed, data is valid:", validatedData);
 
+    // BLOCK: Upload profile picture to Vercel Blob (if provided)
+    // Initialize variable to store profile picture URL
+    let profilePictureUrl: string | undefined = undefined;
+
+    // Check if a profile picture file was uploaded
+    if (profilePictureFile && profilePictureFile.size > 0) {
+      console.log("🔵 [API] Profile picture detected, uploading to Vercel Blob...");
+      console.log("🔵 [API] File name:", profilePictureFile.name);
+      console.log("🔵 [API] File size:", profilePictureFile.size, "bytes");
+      console.log("🔵 [API] File type:", profilePictureFile.type);
+
+      // Upload file to Vercel Blob storage
+      const blob = await put(profilePictureFile.name, profilePictureFile, {
+        access: "public", // Make the file publicly accessible via URL
+      });
+      // put(): uploads file to Vercel Blob and returns an object with url property
+      // First argument: filename to store in blob storage
+      // Second argument: the file data
+      // Third argument: options (access level)
+
+      profilePictureUrl = blob.url; // Store the URL for saving to database
+      console.log("🟢 [API] Profile picture uploaded successfully:", profilePictureUrl);
+    } else {
+      console.log("🔵 [API] No profile picture provided, skipping upload");
+    }
+
     // BLOCK: Database operation - Create tutor record
     // Create new tutor record in Neon database using Prisma
     console.log("🔵 [API] Attempting to create tutor in database...");
@@ -103,6 +139,7 @@ export async function POST(req: NextRequest) {
         email: validatedData.email, // Validated email (guaranteed to be valid email format)
         subject: validatedData.subject, // Validated subject
         bio: validatedData.bio, // Validated bio (can be undefined since it's optional)
+        profilePictureUrl: profilePictureUrl, // URL from Vercel Blob (undefined if no picture uploaded)
       },
     });
     // Returns created record with auto-generated id from database
