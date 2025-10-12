@@ -27,6 +27,11 @@ export default function Home() {
     useState<string>("All Subjects"); // useState<string>: stores a string value, default is "All Subjects" (shows all tutors)
   // When user selects a subject from dropdown, this state updates and triggers re-render with filtered tutors
 
+  // State variable to store the currently selected location filter
+  const [selectedLocation, setSelectedLocation] =
+    useState<string>("All Locations"); // useState<string>: stores a string value, default is "All Locations" (shows all tutors)
+  // When user selects a location from dropdown, this state updates and triggers re-render with filtered tutors
+
   // BLOCK: Side effect - fetch data when component mounts
   // useEffect runs code after the component renders on the page
   useEffect(() => {
@@ -68,15 +73,33 @@ export default function Home() {
   }, []); // Empty dependency array [] means this effect runs only once when component first loads
   // This useEffect block fetches tutors from the API when the page loads
 
+  // BLOCK: Extract unique locations for filter dropdown
+  // Get all unique locations from tutors array (excluding null/undefined)
+  const uniqueLocations = Array.from(
+    new Set(
+      tutors
+        .map((tutor) => tutor.location) // Extract location from each tutor
+        .filter((location) => location) // Remove null/undefined values
+    )
+  ).sort(); // Sort alphabetically
+  // Set creates collection of unique values, Array.from converts Set back to array
+
   // BLOCK: Filter logic
-  // Filter tutors based on selected subject
-  const filteredTutors =
-    selectedSubject === "All Subjects" // Check if "All Subjects" is selected
-      ? tutors // If yes, show all tutors (no filtering)
-      : tutors.filter((tutor) => tutor.subject === selectedSubject); // If no, filter tutors array to only include tutors whose subject matches selectedSubject
-  // .filter() creates a new array containing only elements that pass the test
-  // (tutor) => tutor.subject === selectedSubject: arrow function that returns true if tutor's subject matches selected subject
-  // Result: filteredTutors contains only tutors teaching the selected subject
+  // Filter tutors based on selected subject AND location
+  const filteredTutors = tutors.filter((tutor) => {
+    // Check subject filter
+    const matchesSubject =
+      selectedSubject === "All Subjects" || tutor.subject === selectedSubject;
+
+    // Check location filter
+    const matchesLocation =
+      selectedLocation === "All Locations" ||
+      tutor.location === selectedLocation;
+
+    // Return true only if tutor matches both filters
+    return matchesSubject && matchesLocation;
+  });
+  // Result: filteredTutors contains only tutors matching both subject and location filters
 
   // BLOCK: JSX rendering - what gets displayed on the page
   return (
@@ -90,36 +113,58 @@ export default function Home() {
         <h1 className="page-title">Tutor Profiles</h1>
         {/* Page heading with styles from global.css */}
 
-        {/* BLOCK: Subject filter dropdown */}
-        {/* Dropdown menu to filter tutors by subject */}
+        {/* BLOCK: Filter dropdowns */}
+        {/* Container for subject and location filters */}
         <div className="filter-container">
-          {/* Container div for filter dropdown */}
-          <label htmlFor="subject-filter" className="filter-label">
-            Filter by Subject:
-          </label>
-          {/* Label for the dropdown */}
+          {/* BLOCK: Subject filter dropdown */}
+          <div className="filter-group">
+            <label htmlFor="subject-filter" className="filter-label">
+              Filter by Subject:
+            </label>
 
-          <select
-            id="subject-filter"
-            value={selectedSubject} // Controlled input: value comes from state
-            onChange={(e) => setSelectedSubject(e.target.value)} // When user selects option, update state with new value
-            className="filter-select">
-            {/* onChange: event handler that runs when selection changes */}
-            {/* e.target.value: the value of the selected option */}
+            <select
+              id="subject-filter"
+              value={selectedSubject} // Controlled input: value comes from state
+              onChange={(e) => setSelectedSubject(e.target.value)} // When user selects option, update state with new value
+              className="filter-select">
+              {/* onChange: event handler that runs when selection changes */}
 
-            <option value="All Subjects">All Subjects</option>
-            {/* Default option to show all tutors */}
+              <option value="All Subjects">All Subjects</option>
+              {/* Default option to show all tutors */}
 
-            <option value="Physics">Physics</option>
-            <option value="Chemistry">Chemistry</option>
-            <option value="Biology">Biology</option>
-            <option value="Maths">Maths</option>
-            <option value="English">English</option>
-            <option value="French">French</option>
-            <option value="Arabic">Arabic</option>
-            <option value="Social Sciences">Social Sciences</option>
-            {/* Each option's value attribute is used for filtering */}
-          </select>
+              <option value="Physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Biology">Biology</option>
+              <option value="Maths">Maths</option>
+              <option value="English">English</option>
+              <option value="French">French</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Social Sciences">Social Sciences</option>
+            </select>
+          </div>
+
+          {/* BLOCK: Location filter dropdown */}
+          <div className="filter-group">
+            <label htmlFor="location-filter" className="filter-label">
+              Filter by Location:
+            </label>
+
+            <select
+              id="location-filter"
+              value={selectedLocation} // Controlled input: value comes from state
+              onChange={(e) => setSelectedLocation(e.target.value)} // When user selects option, update state with new value
+              className="filter-select">
+              <option value="All Locations">All Locations</option>
+              {/* Default option to show all tutors */}
+
+              {/* Dynamically generate options from unique locations */}
+              {uniqueLocations.map((location) => (
+                <option key={location} value={location}>
+                  {location}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Conditional rendering: show list if tutors exist, otherwise show message */}
@@ -159,12 +204,24 @@ export default function Home() {
                   )}
 
                   {/* BLOCK: Tutor information */}
-                  {/* Container for name and subject */}
+                  {/* Container for name, subject, price, and location */}
                   <div className="tutor-info">
                     <p className="tutor-name">{tutor.name}</p>
 
                     <p className="tutor-subject">{tutor.subject}</p>
                     {/* Subject with styles from global.css */}
+
+                    {/* Display price if available */}
+                    {tutor.price && (
+                      <p className="tutor-meta">
+                        ${tutor.price.toFixed(2)}/hour
+                      </p>
+                    )}
+
+                    {/* Display location if available */}
+                    {tutor.location && (
+                      <p className="tutor-meta">{tutor.location}</p>
+                    )}
                   </div>
                 </Link>
               </li>

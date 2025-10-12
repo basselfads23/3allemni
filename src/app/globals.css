@@ -61,13 +61,20 @@ body {
 }
 
 /* BLOCK: Filter styles */
-/* Container for filter dropdown with spacing */
+/* Container for all filter dropdowns with spacing */
 .filter-container {
+  display: flex; /* Flexbox layout */
+  flex-wrap: wrap; /* Allow filters to wrap on small screens */
+  gap: 1.5rem; /* 24px spacing between filters */
+  margin-bottom: 1.5rem; /* 24px bottom margin to separate from tutor list */
+  justify-content: center; /* Center horizontally */
+}
+
+/* Individual filter group (label + dropdown) */
+.filter-group {
   display: flex; /* Flexbox layout */
   align-items: center; /* Vertically center label and dropdown */
   gap: 0.75rem; /* 12px spacing between label and dropdown */
-  margin-bottom: 1.5rem; /* 24px bottom margin to separate from tutor list */
-  justify-content: center; /* Center horizontally */
 }
 
 /* Filter label text */
@@ -267,6 +274,13 @@ input[type="file"].form-input {
   font-size: 0.875rem; /* 14px */
   color: #4b5563; /* Medium gray */
   margin-bottom: 0.5rem; /* 8px bottom margin */
+}
+
+/* Tutor meta information (price, location) */
+.tutor-meta {
+  font-size: 0.8125rem; /* 13px */
+  color: #6b7280; /* Light gray */
+  margin-bottom: 0.25rem; /* 4px bottom margin */
 }
 
 /* Tutor bio text */
