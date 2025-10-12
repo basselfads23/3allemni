@@ -16,6 +16,8 @@ export default function Home() {
   const [email, setEmail] = useState(""); // Holds the email input value
   const [subject, setSubject] = useState(""); // Holds the subject dropdown value
   const [bio, setBio] = useState(""); // Holds the bio textarea value
+  const [price, setPrice] = useState(""); // Holds the price per hour input value
+  const [location, setLocation] = useState(""); // Holds the location input value
   const [profilePicture, setProfilePicture] = useState<File | null>(null); // Holds the profile picture file (optional)
 
   // BLOCK: State for validation errors
@@ -43,6 +45,8 @@ export default function Home() {
       email, // Current value of email field
       subject, // Current value of subject field
       bio, // Current value of bio field (can be empty since it's optional)
+      price: price === "" ? undefined : parseFloat(price), // Convert price string to number, or undefined if empty
+      location: location === "" ? undefined : location, // Use location string, or undefined if empty
     };
 
     // BLOCK: Validate form data with Zod
@@ -81,6 +85,16 @@ export default function Home() {
     formData.append("subject", subject);
     formData.append("bio", bio);
 
+    // Add price if provided (not empty string)
+    if (price !== "") {
+      formData.append("price", price);
+    }
+
+    // Add location if provided (not empty string)
+    if (location !== "") {
+      formData.append("location", location);
+    }
+
     // Add profile picture file if one was selected
     if (profilePicture) {
       formData.append("profilePicture", profilePicture);
@@ -102,6 +116,8 @@ export default function Home() {
       setEmail("");
       setSubject("");
       setBio("");
+      setPrice("");
+      setLocation("");
       setProfilePicture(null);
       setFileInputKey((prev) => prev + 1); // Reset file input by changing its key
     } else {
@@ -199,6 +215,44 @@ export default function Home() {
           </div>
 
           <div className="form-field">
+            <label htmlFor="price" className="form-label">
+              Price per Hour (Optional)
+            </label>
+
+            <input
+              type="number"
+              id="price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="form-input"
+              placeholder="e.g. 25.00"
+              step="0.01"
+              min="0"
+            />
+
+            {/* Display error message if price validation fails */}
+            {errors.price && <p className="form-error">{errors.price}</p>}
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="location" className="form-label">
+              Location (Optional)
+            </label>
+
+            <input
+              type="text"
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="form-input"
+              placeholder="e.g. Cairo, Egypt"
+            />
+
+            {/* Display error message if location validation fails */}
+            {errors.location && <p className="form-error">{errors.location}</p>}
+          </div>
+
+          <div className="form-field">
             <label htmlFor="profilePicture" className="form-label">
               Profile Picture (Optional)
             </label>
@@ -218,7 +272,12 @@ export default function Home() {
 
             {/* Display selected file name if a file is chosen */}
             {profilePicture && (
-              <p style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "#4b5563" }}>
+              <p
+                style={{
+                  marginTop: "0.5rem",
+                  fontSize: "0.875rem",
+                  color: "#4b5563",
+                }}>
                 Selected: {profilePicture.name}
               </p>
             )}

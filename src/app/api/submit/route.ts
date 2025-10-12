@@ -47,7 +47,13 @@ export async function POST(req: NextRequest) {
     const email = formData.get("email") as string;
     const subject = formData.get("subject") as string;
     const bio = formData.get("bio") as string;
+    const priceString = formData.get("price") as string | null;
+    const location = formData.get("location") as string | null;
     const profilePictureFile = formData.get("profilePicture") as File | null;
+
+    // Convert price string to number if provided
+    const price =
+      priceString && priceString !== "" ? parseFloat(priceString) : undefined;
 
     console.log(
       "🔵 [API] Extracted fields - name:",
@@ -58,14 +64,25 @@ export async function POST(req: NextRequest) {
       subject,
       "bio:",
       bio,
+      "price:",
+      price,
+      "location:",
+      location,
       "has profile picture:",
       !!profilePictureFile
     );
 
     // BLOCK: Validate data with Zod schema
-    // Use Zod to validate the text fields against our schema rules
+    // Use Zod to validate all fields against our schema rules
     console.log("🔵 [API] Validating data with Zod...");
-    const validation = tutorSchema.safeParse({ name, email, subject, bio });
+    const validation = tutorSchema.safeParse({
+      name,
+      email,
+      subject,
+      bio,
+      price,
+      location,
+    });
     // safeParse(): validates data without throwing errors
     // Returns: { success: true, data: validatedData } OR { success: false, error: zodError }
 
@@ -76,7 +93,9 @@ export async function POST(req: NextRequest) {
 
       // Extract first error message to show to client
       const firstError = validation.error.issues[0]; // Get first validation error from array
-      const errorMessage = `${firstError.path.join(".")}: ${firstError.message}`;
+      const errorMessage = `${firstError.path.join(".")}: ${
+        firstError.message
+      }`;
       // firstError.path: field that failed (e.g., ["email"])
       // firstError.message: error message (e.g., "Please enter a valid email address")
       // .join("."): converts ["email"] to "email"
@@ -98,7 +117,9 @@ export async function POST(req: NextRequest) {
 
     // Check if a profile picture file was uploaded
     if (profilePictureFile && profilePictureFile.size > 0) {
-      console.log("🔵 [API] Profile picture detected, uploading to Vercel Blob...");
+      console.log(
+        "🔵 [API] Profile picture detected, uploading to Vercel Blob..."
+      );
       console.log("🔵 [API] File name:", profilePictureFile.name);
       console.log("🔵 [API] File size:", profilePictureFile.size, "bytes");
       console.log("🔵 [API] File type:", profilePictureFile.type);
@@ -113,7 +134,10 @@ export async function POST(req: NextRequest) {
       // Third argument: options (access level)
 
       profilePictureUrl = blob.url; // Store the URL for saving to database
-      console.log("🟢 [API] Profile picture uploaded successfully:", profilePictureUrl);
+      console.log(
+        "🟢 [API] Profile picture uploaded successfully:",
+        profilePictureUrl
+      );
     } else {
       console.log("🔵 [API] No profile picture provided, skipping upload");
     }
@@ -139,6 +163,8 @@ export async function POST(req: NextRequest) {
         email: validatedData.email, // Validated email (guaranteed to be valid email format)
         subject: validatedData.subject, // Validated subject
         bio: validatedData.bio, // Validated bio (can be undefined since it's optional)
+        price: validatedData.price, // Validated price (can be undefined since it's optional)
+        location: validatedData.location, // Validated location (can be undefined since it's optional)
         profilePictureUrl: profilePictureUrl, // URL from Vercel Blob (undefined if no picture uploaded)
       },
     });

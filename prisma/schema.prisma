@@ -26,5 +26,7 @@ model Tutor {
   subject           String  // Text field for subject they teach
   bio               String?
   profilePictureUrl String? // URL to profile picture stored in Vercel Blob (optional)
+  price             Float?  // Price per hour in currency units (optional)
+  location          String? // Location as "City, Country" format (optional)
 }
-// The model creates a table with columns for tutor info including optional profile picture
+// The model creates a table with columns for tutor info including profile picture, price, and location

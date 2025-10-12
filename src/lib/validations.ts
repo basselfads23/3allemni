@@ -32,6 +32,17 @@ export const tutorSchema = z.object({
     .string() // Must be a string
     .optional(), // This field is optional (can be undefined or empty)
   // .optional() means the field can be missing or undefined
+
+  // Validate 'price' field (optional)
+  price: z
+    .number() // Must be a number
+    .positive("Price must be greater than 0") // Must be positive
+    .optional(), // This field is optional (can be undefined)
+
+  // Validate 'location' field (optional)
+  location: z
+    .string() // Must be a string
+    .optional(), // This field is optional (can be undefined)
 });
 
 // BLOCK: TypeScript Type Inference
@@ -48,5 +59,5 @@ export type TutorFormData = z.infer<typeof tutorSchema>;
 export type Tutor = TutorFormData & { id: number; profilePictureUrl?: string };
 // & is the "intersection" operator - combines two types
 // Takes all properties from TutorFormData AND adds { id: number; profilePictureUrl?: string }
-// Result: Tutor = { id: number; name: string; email: string; subject: string; bio?: string; profilePictureUrl?: string }
+// Result: Tutor = { id: number; name: string; email: string; subject: string; bio?: string; price?: number; location?: string; profilePictureUrl?: string }
 // Use this type when working with tutors from the database
