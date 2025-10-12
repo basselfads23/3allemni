@@ -48,12 +48,16 @@ export async function POST(req: NextRequest) {
     const subject = formData.get("subject") as string;
     const bio = formData.get("bio") as string;
     const priceString = formData.get("price") as string | null;
-    const location = formData.get("location") as string | null;
+    const locationString = formData.get("location") as string | null;
     const profilePictureFile = formData.get("profilePicture") as File | null;
 
-    // Convert price string to number if provided
+    // Convert price string to number if provided, otherwise undefined for Zod validation
     const price =
       priceString && priceString !== "" ? parseFloat(priceString) : undefined;
+
+    // Convert location to undefined if null or empty (Zod .optional() expects undefined, not null)
+    const location =
+      locationString && locationString !== "" ? locationString : undefined;
 
     console.log(
       "🔵 [API] Extracted fields - name:",
