@@ -211,11 +211,47 @@ input[type="file"].form-input {
 
 /* Link wrapper for tutor cards - makes entire card clickable */
 .tutor-link {
-  display: block; /* Makes link fill entire card */
+  display: flex; /* Flexbox layout for profile picture and content */
+  align-items: center; /* Vertically center profile picture and text */
+  gap: 1rem; /* 16px spacing between profile picture and content */
   padding: 1.25rem; /* 20px padding */
   text-decoration: none; /* Remove underline */
   color: inherit; /* Use parent text color */
   cursor: pointer; /* Show pointer cursor */
+}
+
+/* Profile picture thumbnail on tutor list */
+.tutor-thumbnail {
+  width: 3.5rem; /* 56px width */
+  height: 3.5rem; /* 56px height - square thumbnail */
+  border-radius: 50%; /* Make circular */
+  object-fit: cover; /* Crop image to fill circle without distortion */
+  flex-shrink: 0; /* Prevent thumbnail from shrinking */
+  background-color: #e5e7eb; /* Light gray background for placeholder */
+  border: 2px solid #e5e7eb; /* Light gray border */
+}
+
+/* Placeholder for tutors without profile picture */
+.tutor-thumbnail-placeholder {
+  width: 3.5rem; /* 56px width */
+  height: 3.5rem; /* 56px height */
+  border-radius: 50%; /* Make circular */
+  background-color: #dbeafe; /* Light blue background */
+  display: flex; /* Center content */
+  align-items: center; /* Vertically center */
+  justify-content: center; /* Horizontally center */
+  flex-shrink: 0; /* Prevent placeholder from shrinking */
+  font-size: 1.5rem; /* 24px - large initials */
+  font-weight: 600; /* Semi-bold */
+  color: #1e40af; /* Dark blue text */
+  border: 2px solid #93c5fd; /* Medium blue border */
+}
+
+/* Container for tutor info (name and subject) */
+.tutor-info {
+  display: flex; /* Flexbox layout */
+  flex-direction: column; /* Stack name and subject vertically */
+  gap: 0.25rem; /* 4px spacing between name and subject */
 }
 
 /* Tutor name text */

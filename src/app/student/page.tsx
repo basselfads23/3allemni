@@ -137,10 +137,31 @@ export default function Home() {
                   {/* href: destination URL - template literal creates /tutors/1, /tutors/2, etc. */}
                   {/* tutor.id: dynamic part of the URL */}
 
-                  <p className="tutor-name">Name: {tutor.name}</p>
+                  {/* BLOCK: Profile picture or placeholder */}
+                  {/* Display profile picture if available, otherwise show placeholder with initials */}
+                  {tutor.profilePictureUrl ? (
+                    // If profile picture URL exists, show image
+                    <img
+                      src={tutor.profilePictureUrl}
+                      alt={`${tutor.name}'s profile`}
+                      className="tutor-thumbnail"
+                    />
+                  ) : (
+                    // If no profile picture, show placeholder with first letter of name
+                    <div className="tutor-thumbnail-placeholder">
+                      {tutor.name.charAt(0).toUpperCase()}
+                      {/* charAt(0): gets first character, toUpperCase(): makes it uppercase */}
+                    </div>
+                  )}
 
-                  <p className="tutor-subject">Subject: {tutor.subject}</p>
-                  {/* Subject with styles from global.css */}
+                  {/* BLOCK: Tutor information */}
+                  {/* Container for name and subject */}
+                  <div className="tutor-info">
+                    <p className="tutor-name">Name: {tutor.name}</p>
+
+                    <p className="tutor-subject">Subject: {tutor.subject}</p>
+                    {/* Subject with styles from global.css */}
+                  </div>
                 </Link>
               </li>
             ))}
