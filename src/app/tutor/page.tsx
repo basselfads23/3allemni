@@ -16,10 +16,17 @@ export default function Home() {
   const [email, setEmail] = useState(""); // Holds the email input value
   const [subject, setSubject] = useState(""); // Holds the subject dropdown value
   const [bio, setBio] = useState(""); // Holds the bio textarea value
+  const [price, setPrice] = useState(""); // Holds the price per hour input value
+  const [location, setLocation] = useState(""); // Holds the location input value
+  const [profilePicture, setProfilePicture] = useState<File | null>(null); // Holds the profile picture file (optional)
 
   // BLOCK: State for validation errors
   // This will store error messages from Zod validation
   const [errors, setErrors] = useState<Record<string, string>>({}); // Record<string, string> means an object with string keys and string values, like { email: "Invalid email", name: "Too short" }
+
+  // BLOCK: State for file input reference
+  // Store reference to file input element so we can reset it programmatically
+  const [fileInputKey, setFileInputKey] = useState(0); // Key to force file input to re-render and clear
 
   // BLOCK: Form submission handler
   // This function runs when the user clicks the Submit button
@@ -31,18 +38,20 @@ export default function Home() {
     // Reset errors to empty object before validating
     setErrors({}); // Clears any old error messages from previous submission attempts
 
-    // BLOCK: Prepare form data
+    // BLOCK: Prepare form data for validation
     // Collect all form field values into one object
-    const formData = {
+    const validationData = {
       name, // Current value of name field
       email, // Current value of email field
       subject, // Current value of subject field
       bio, // Current value of bio field (can be empty since it's optional)
+      price: price === "" ? undefined : parseFloat(price), // Convert price string to number, or undefined if empty
+      location: location === "" ? undefined : location, // Use location string, or undefined if empty
     };
 
     // BLOCK: Validate form data with Zod
     // Use safeParse to check if data matches our schema rules
-    const result = tutorSchema.safeParse(formData);
+    const result = tutorSchema.safeParse(validationData);
     // safeParse returns an object with either:
     // - { success: true, data: validatedData } if validation passes
     // - { success: false, error: zodError } if validation fails
@@ -69,12 +78,32 @@ export default function Home() {
 
     // BLOCK: Submit validated data to API
     // If we reach here, validation passed! Now submit to backend
+    // Use FormData to send both text fields and file upload
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("subject", subject);
+    formData.append("bio", bio);
+
+    // Add price if provided (not empty string)
+    if (price !== "") {
+      formData.append("price", price);
+    }
+
+    // Add location if provided (not empty string)
+    if (location !== "") {
+      formData.append("location", location);
+    }
+
+    // Add profile picture file if one was selected
+    if (profilePicture) {
+      formData.append("profilePicture", profilePicture);
+    }
+
     const res = await fetch("/api/submit", {
       method: "POST", // HTTP method for creating/sending data
-      headers: {
-        "Content-Type": "application/json", // Tell server we're sending JSON
-      },
-      body: JSON.stringify({ name, email, subject, bio }), // Convert form data to JSON string
+      // Don't set Content-Type header - browser will set it automatically with boundary for multipart/form-data
+      body: formData, // Send FormData instead of JSON
     });
 
     // BLOCK: Handle API response
@@ -87,6 +116,10 @@ export default function Home() {
       setEmail("");
       setSubject("");
       setBio("");
+      setPrice("");
+      setLocation("");
+      setProfilePicture(null);
+      setFileInputKey((prev) => prev + 1); // Reset file input by changing its key
     } else {
       // If API returned error (400, 500, etc.)
       alert("Form submission failed."); // Show error message
@@ -179,6 +212,75 @@ export default function Home() {
               placeholder="Describe yourself briefly"
               onChange={(e) => setBio(e.target.value)}
             />
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="price" className="form-label">
+              Price per Hour (Optional)
+            </label>
+
+            <input
+              type="number"
+              id="price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="form-input"
+              placeholder="e.g. 25.00"
+              step="0.01"
+              min="0"
+            />
+
+            {/* Display error message if price validation fails */}
+            {errors.price && <p className="form-error">{errors.price}</p>}
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="location" className="form-label">
+              Location (Optional)
+            </label>
+
+            <input
+              type="text"
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="form-input"
+              placeholder="e.g. Beirut, Lebanon"
+            />
+
+            {/* Display error message if location validation fails */}
+            {errors.location && <p className="form-error">{errors.location}</p>}
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="profilePicture" className="form-label">
+              Profile Picture (Optional)
+            </label>
+
+            <input
+              key={fileInputKey}
+              type="file"
+              id="profilePicture"
+              accept="image/*"
+              className="form-input"
+              onChange={(e) => {
+                // Get the first file from the file input (if any)
+                const file = e.target.files?.[0] || null;
+                setProfilePicture(file);
+              }}
+            />
+
+            {/* Display selected file name if a file is chosen */}
+            {profilePicture && (
+              <p
+                style={{
+                  marginTop: "0.5rem",
+                  fontSize: "0.875rem",
+                  color: "#4b5563",
+                }}>
+                Selected: {profilePicture.name}
+              </p>
+            )}
           </div>
 
           <button type="submit" className="form-button">

@@ -10,6 +10,7 @@
 import { useEffect, useState } from "react"; // useEffect: runs code after render, useState: manages component state
 import { useParams, useRouter } from "next/navigation"; // useParams: gets URL parameters like [id], useRouter: programmatic navigation
 import Link from "next/link"; // Link: Next.js component for client-side navigation
+import Image from "next/image"; // Image: Next.js component for optimized images
 
 // Import Tutor type from validations
 import { Tutor } from "@/lib/validations"; // Type definition for tutor data (includes id)
@@ -143,6 +144,26 @@ export default function TutorProfile() {
 
         {/* Profile card with tutor details */}
         <div className="card profile-card">
+          {/* BLOCK: Profile picture or placeholder */}
+          {/* Display large profile picture prominently at the top */}
+          {tutor.profilePictureUrl ? (
+            // If profile picture URL exists, show optimized image
+            <Image
+              src={tutor.profilePictureUrl}
+              alt={`${tutor.name}'s profile`}
+              width={144}
+              height={144}
+              className="profile-picture"
+              priority
+            />
+          ) : (
+            // If no profile picture, show placeholder with first letter of name
+            <div className="profile-picture-placeholder">
+              {tutor.name.charAt(0).toUpperCase()}
+              {/* charAt(0): gets first character, toUpperCase(): makes it uppercase */}
+            </div>
+          )}
+
           {/* Tutor name as main heading */}
           <h1 className="profile-name">{tutor.name}</h1>
 
@@ -151,6 +172,24 @@ export default function TutorProfile() {
 
           {/* Details section */}
           <div className="profile-details">
+            {/* Price section - only show if price exists */}
+            {tutor.price && (
+              <div className="profile-detail-item">
+                <span className="profile-detail-label">Price:</span>
+                <p className="profile-detail-value">
+                  ${tutor.price.toFixed(2)}/hour
+                </p>
+              </div>
+            )}
+
+            {/* Location section - only show if location exists */}
+            {tutor.location && (
+              <div className="profile-detail-item">
+                <span className="profile-detail-label">Location:</span>
+                <p className="profile-detail-value">{tutor.location}</p>
+              </div>
+            )}
+
             {/* Email section */}
             <div className="profile-detail-item">
               <span className="profile-detail-label">Email:</span>

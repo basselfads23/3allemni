@@ -10,13 +10,122 @@ body {
   font-family: Arial, Helvetica, sans-serif; /* Default font */
   margin: 0; /* Remove default margin */
   padding: 0; /* Remove default padding */
+  display: flex; /* Flexbox layout for header, main, footer */
+  flex-direction: column; /* Stack vertically */
+  min-height: 100vh; /* Full viewport height */
+}
+
+/* BLOCK: Custom scrollbar styles */
+/* Scrollbar for webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 10px; /* Width of vertical scrollbar */
+  height: 10px; /* Height of horizontal scrollbar */
+}
+
+/* Scrollbar track (background) */
+::-webkit-scrollbar-track {
+  background: #f1f5f9; /* Light gray background */
+  border-radius: 10px; /* Rounded corners */
+}
+
+/* Scrollbar thumb (draggable part) */
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* Medium gray */
+  border-radius: 10px; /* Rounded corners */
+  border: 2px solid #f1f5f9; /* Border to create padding effect */
+}
+
+/* Scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6; /* Blue on hover - matches design */
+}
+
+/* Scrollbar thumb when being dragged */
+::-webkit-scrollbar-thumb:active {
+  background: #2563eb; /* Darker blue when active */
+}
+
+/* Scrollbar for Firefox */
+* {
+  scrollbar-width: thin; /* Thin scrollbar */
+  scrollbar-color: #cbd5e1 #f1f5f9; /* Thumb color, track color */
+}
+
+/* BLOCK: Header styles */
+/* Global header navigation bar */
+.header {
+  background-color: #ffffff; /* White background */
+  border-bottom: 1px solid #e5e7eb; /* Light gray bottom border */
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); /* Small shadow */
+}
+
+/* Header content container with max width */
+.header-content {
+  max-width: 80rem; /* 1280px max width */
+  margin: 0 auto; /* Center horizontally */
+  padding: 1rem 2rem; /* 16px top/bottom, 32px left/right */
+  display: flex; /* Flexbox layout */
+  justify-content: space-between; /* Space between logo and nav */
+  align-items: center; /* Vertically center */
+}
+
+/* Logo/brand text */
+.header-logo {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 700; /* Bold */
+  color: #3b82f6; /* Blue text */
+  text-decoration: none; /* No underline */
+  transition: color 0.2s; /* Smooth color transition */
+}
+
+/* Logo hover state */
+.header-logo:hover {
+  color: #2563eb; /* Darker blue on hover */
+}
+
+/* Navigation container */
+.header-nav {
+  display: flex; /* Flexbox layout */
+  gap: 2rem; /* 32px spacing between links */
+}
+
+/* Navigation link */
+.header-link {
+  font-size: 1rem; /* 16px */
+  font-weight: 500; /* Medium weight */
+  color: #374151; /* Dark gray */
+  text-decoration: none; /* No underline */
+  transition: color 0.2s; /* Smooth color transition */
+}
+
+/* Navigation link hover state */
+.header-link:hover {
+  color: #3b82f6; /* Blue on hover */
+}
+
+/* BLOCK: Footer styles */
+/* Global footer */
+.footer {
+  background-color: #f9fafb; /* Light gray background */
+  border-top: 1px solid #e5e7eb; /* Light gray top border */
+  margin-top: auto; /* Push to bottom */
+}
+
+/* Footer text */
+.footer-text {
+  max-width: 80rem; /* 1280px max width */
+  margin: 0 auto; /* Center horizontally */
+  padding: 1.5rem 2rem; /* 24px top/bottom, 32px left/right */
+  text-align: center; /* Center text */
+  color: #6b7280; /* Medium gray */
+  font-size: 0.875rem; /* 14px */
 }
 
 /* BLOCK: Page container styles */
 /* Container for main page content with centered layout */
 .page-container {
   display: flex; /* Flexbox layout */
-  min-height: 100vh; /* Full viewport height */
+  flex: 1; /* Grow to fill available space between header and footer */
   flex-direction: column; /* Stack children vertically */
   align-items: center; /* Center horizontally */
   justify-content: center; /* Center vertically */
@@ -61,13 +170,20 @@ body {
 }
 
 /* BLOCK: Filter styles */
-/* Container for filter dropdown with spacing */
+/* Container for all filter dropdowns with spacing */
 .filter-container {
+  display: flex; /* Flexbox layout */
+  flex-wrap: wrap; /* Allow filters to wrap on small screens */
+  gap: 1.5rem; /* 24px spacing between filters */
+  margin-bottom: 1.5rem; /* 24px bottom margin to separate from tutor list */
+  justify-content: center; /* Center horizontally */
+}
+
+/* Individual filter group (label + dropdown) */
+.filter-group {
   display: flex; /* Flexbox layout */
   align-items: center; /* Vertically center label and dropdown */
   gap: 0.75rem; /* 12px spacing between label and dropdown */
-  margin-bottom: 1.5rem; /* 24px bottom margin to separate from tutor list */
-  justify-content: center; /* Center horizontally */
 }
 
 /* Filter label text */
@@ -150,6 +266,12 @@ textarea.form-input {
   line-height: 1.5; /* Better readability */
 }
 
+/* File input specific styles */
+input[type="file"].form-input {
+  padding: 0.5rem; /* Slightly less padding for file inputs */
+  cursor: pointer; /* Pointer cursor to indicate it's clickable */
+}
+
 /* Form error message */
 .form-error {
   margin-top: 0.375rem; /* 6px top margin */
@@ -205,11 +327,47 @@ textarea.form-input {
 
 /* Link wrapper for tutor cards - makes entire card clickable */
 .tutor-link {
-  display: block; /* Makes link fill entire card */
+  display: flex; /* Flexbox layout for profile picture and content */
+  align-items: center; /* Vertically center profile picture and text */
+  gap: 1rem; /* 16px spacing between profile picture and content */
   padding: 1.25rem; /* 20px padding */
   text-decoration: none; /* Remove underline */
   color: inherit; /* Use parent text color */
   cursor: pointer; /* Show pointer cursor */
+}
+
+/* Profile picture thumbnail on tutor list */
+.tutor-thumbnail {
+  width: 3.5rem; /* 56px width */
+  height: 3.5rem; /* 56px height - square thumbnail */
+  border-radius: 50%; /* Make circular */
+  object-fit: cover; /* Crop image to fill circle without distortion */
+  flex-shrink: 0; /* Prevent thumbnail from shrinking */
+  background-color: #e5e7eb; /* Light gray background for placeholder */
+  border: 2px solid #e5e7eb; /* Light gray border */
+}
+
+/* Placeholder for tutors without profile picture */
+.tutor-thumbnail-placeholder {
+  width: 3.5rem; /* 56px width */
+  height: 3.5rem; /* 56px height */
+  border-radius: 50%; /* Make circular */
+  background-color: #dbeafe; /* Light blue background */
+  display: flex; /* Center content */
+  align-items: center; /* Vertically center */
+  justify-content: center; /* Horizontally center */
+  flex-shrink: 0; /* Prevent placeholder from shrinking */
+  font-size: 1.5rem; /* 24px - large initials */
+  font-weight: 600; /* Semi-bold */
+  color: #1e40af; /* Dark blue text */
+  border: 2px solid #93c5fd; /* Medium blue border */
+}
+
+/* Container for tutor info (name and subject) */
+.tutor-info {
+  display: flex; /* Flexbox layout */
+  flex-direction: column; /* Stack name and subject vertically */
+  gap: 0.25rem; /* 4px spacing between name and subject */
 }
 
 /* Tutor name text */
@@ -225,6 +383,13 @@ textarea.form-input {
   font-size: 0.875rem; /* 14px */
   color: #4b5563; /* Medium gray */
   margin-bottom: 0.5rem; /* 8px bottom margin */
+}
+
+/* Tutor meta information (price, location) */
+.tutor-meta {
+  font-size: 0.8125rem; /* 13px */
+  color: #6b7280; /* Light gray */
+  margin-bottom: 0.25rem; /* 4px bottom margin */
 }
 
 /* Tutor bio text */
@@ -260,6 +425,33 @@ textarea.form-input {
 /* Profile card container */
 .profile-card {
   text-align: center; /* Center all content */
+}
+
+/* Profile picture on tutor profile page */
+.profile-picture {
+  width: 9rem; /* 144px width */
+  height: 9rem; /* 144px height */
+  border-radius: 50%; /* Make circular */
+  object-fit: cover; /* Crop image to fill circle without distortion */
+  margin: 0 auto 1.5rem; /* Center horizontally, 24px bottom margin */
+  display: block; /* Make it a block element for centering */
+  border: 4px solid #e5e7eb; /* Light gray border */
+}
+
+/* Profile picture placeholder on tutor profile page */
+.profile-picture-placeholder {
+  width: 9rem; /* 144px width */
+  height: 9rem; /* 144px height */
+  border-radius: 50%; /* Make circular */
+  background-color: #dbeafe; /* Light blue background */
+  display: flex; /* Center content */
+  align-items: center; /* Vertically center */
+  justify-content: center; /* Horizontally center */
+  margin: 0 auto 1.5rem; /* Center horizontally, 24px bottom margin */
+  font-size: 3rem; /* 48px - very large initials */
+  font-weight: 700; /* Bold */
+  color: #1e40af; /* Dark blue text */
+  border: 4px solid #93c5fd; /* Medium blue border */
 }
 
 /* Tutor name on profile page */
@@ -302,6 +494,13 @@ textarea.form-input {
   font-size: 0.875rem; /* 14px */
   text-transform: uppercase; /* UPPERCASE TEXT */
   letter-spacing: 0.05em; /* Slightly spaced letters */
+}
+
+/* Value text for detail items (price, location) */
+.profile-detail-value {
+  color: #111827; /* Dark gray */
+  font-size: 1.125rem; /* 18px */
+  font-weight: 500; /* Medium weight */
 }
 
 /* Email link styling */
@@ -348,7 +547,7 @@ textarea.form-input {
 /* Landing page container with centered content */
 .landing-container {
   display: flex; /* Flexbox layout */
-  min-height: 100vh; /* Full viewport height */
+  flex: 1; /* Grow to fill available space between header and footer */
   align-items: center; /* Center vertically */
   justify-content: center; /* Center horizontally */
   background: linear-gradient(
