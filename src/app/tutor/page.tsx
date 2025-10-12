@@ -245,7 +245,7 @@ export default function Home() {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               className="form-input"
-              placeholder="e.g. Cairo, Egypt"
+              placeholder="e.g. Beirut, Lebanon"
             />
 
             {/* Display error message if location validation fails */}
