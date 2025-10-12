@@ -15,6 +15,42 @@ body {
   min-height: 100vh; /* Full viewport height */
 }
 
+/* BLOCK: Custom scrollbar styles */
+/* Scrollbar for webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 10px; /* Width of vertical scrollbar */
+  height: 10px; /* Height of horizontal scrollbar */
+}
+
+/* Scrollbar track (background) */
+::-webkit-scrollbar-track {
+  background: #f1f5f9; /* Light gray background */
+  border-radius: 10px; /* Rounded corners */
+}
+
+/* Scrollbar thumb (draggable part) */
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* Medium gray */
+  border-radius: 10px; /* Rounded corners */
+  border: 2px solid #f1f5f9; /* Border to create padding effect */
+}
+
+/* Scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6; /* Blue on hover - matches design */
+}
+
+/* Scrollbar thumb when being dragged */
+::-webkit-scrollbar-thumb:active {
+  background: #2563eb; /* Darker blue when active */
+}
+
+/* Scrollbar for Firefox */
+* {
+  scrollbar-width: thin; /* Thin scrollbar */
+  scrollbar-color: #cbd5e1 #f1f5f9; /* Thumb color, track color */
+}
+
 /* BLOCK: Header styles */
 /* Global header navigation bar */
 .header {
