@@ -27,9 +27,3 @@ To unify the application and improve navigation, a persistent header and footer 
   - It will contain the "3allemni" name/logo on the left.
   - It will include navigation links: "Find a Tutor" (`/student`) and "Become a Tutor" (`/tutor`).
 - **Layout (`layout.tsx`):** A simple global `Footer` component will be created with basic information (e.g., "© 2025 3allemni").
-
-### Future Ideas (To be considered for v1.4+)
-
-- **Tutor Authentication & Editing:** Allow tutors to create an account (e.g., with a password or social login) so they can log in and edit their own profiles later.
-- **Admin Dashboard:** Revisit the idea of an admin page to manage tutors (view, edit, delete).
-- **Advanced Filtering:** Allow students to filter by price range in addition to subject and location.
