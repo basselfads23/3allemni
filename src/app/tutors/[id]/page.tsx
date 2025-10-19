@@ -189,14 +189,8 @@ export default function TutorProfile() {
               </div>
             )}
 
-            {/* Email section */}
-            <div className="profile-detail-item">
-              <span className="profile-detail-label">Email:</span>
-              <a href={`mailto:${tutor.email}`} className="profile-email">
-                {tutor.email}
-              </a>
-              {/* mailto: link opens user's email client with tutor's email pre-filled */}
-            </div>
+            {/* Note: Email is now in the User model, not Tutor model */}
+            {/* Will be added back when we implement dashboard with user context */}
 
             {/* Bio section - only show if bio exists */}
             {tutor.bio && (

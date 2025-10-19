@@ -22,8 +22,8 @@ export async function POST(req: NextRequest) {
     apiLogger.success("FormData parsed successfully");
 
     // Extract fields from FormData
+    // Note: Email is no longer needed here - it comes from User model (OAuth)
     const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
     const subject = formData.get("subject") as string;
     const bio = formData.get("bio") as string;
     const priceString = formData.get("price") as string | null;
@@ -40,7 +40,6 @@ export async function POST(req: NextRequest) {
 
     apiLogger.info("Extracted fields:", {
       name,
-      email,
       subject,
       hasProfilePicture: !!profilePictureFile,
     });
@@ -49,7 +48,6 @@ export async function POST(req: NextRequest) {
     apiLogger.info("Validating data with Zod...");
     const validation = tutorSchema.safeParse({
       name,
-      email,
       subject,
       bio,
       price,
@@ -81,9 +79,12 @@ export async function POST(req: NextRequest) {
     }
 
     // BLOCK: Create tutor in database
+    // TODO: Replace with actual userId from authenticated session
+    // This temporary userId will be replaced when dashboard is implemented
     apiLogger.info("Creating tutor in database...");
     const tutor = await createTutor({
       ...validatedData,
+      userId: 1, // Temporary: will use session.user.id from dashboard
       profilePictureUrl,
     });
 

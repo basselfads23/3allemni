@@ -9,6 +9,7 @@ import { z } from "zod";
 // BLOCK: Tutor Schema Definition
 // Define validation schema for tutor registration form
 // This creates a "contract" that data must follow
+// Note: Email is no longer here - it's in the User model (from OAuth)
 export const tutorSchema = z.object({
   // z.object() - creates a schema for an object with specific properties
   // Everything inside the curly braces defines what properties the object should have
@@ -18,9 +19,6 @@ export const tutorSchema = z.object({
     .string() // Must be a string (text)
     .min(2, "Name must be at least 2 characters") // Minimum 2 characters, custom error message if fails
     .max(100, "Name must be less than 100 characters"), // Maximum 100 characters
-
-  // Validate 'email' field
-  email: z.email("Please enter a valid email address"), // z.email() validates email format directly (has @ and domain), custom error message
 
   // Validate 'subject' field
   subject: z
@@ -50,14 +48,19 @@ export const tutorSchema = z.object({
 // This gives us type safety in our code
 export type TutorFormData = z.infer<typeof tutorSchema>;
 // z.infer<typeof tutorSchema> - automatically creates a TypeScript type from our schema
-// Result: TutorFormData = { name: string; email: string; subject: string; bio?: string }
-// The ? after bio means it's optional
+// Result: TutorFormData = { name: string; subject: string; bio?: string; price?: number; location?: string }
+// The ? means the field is optional
 // Now we can use this type throughout our app for type checking
 
 // BLOCK: Database Tutor Type
-// Type for tutors fetched from database (includes auto-generated ID and profile picture URL)
-export type Tutor = TutorFormData & { id: number; profilePictureUrl?: string };
+// Type for tutors fetched from database (includes auto-generated fields)
+export type Tutor = TutorFormData & {
+  id: number; // Auto-generated ID
+  userId: number; // Foreign key to User
+  profilePictureUrl?: string; // Optional profile picture from Vercel Blob
+  createdAt?: Date; // Auto-generated timestamp
+  updatedAt?: Date; // Auto-generated timestamp
+};
 // & is the "intersection" operator - combines two types
-// Takes all properties from TutorFormData AND adds { id: number; profilePictureUrl?: string }
-// Result: Tutor = { id: number; name: string; email: string; subject: string; bio?: string; price?: number; location?: string; profilePictureUrl?: string }
+// Takes all properties from TutorFormData AND adds the database fields
 // Use this type when working with tutors from the database

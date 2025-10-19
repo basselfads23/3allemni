@@ -18,15 +18,86 @@ datasource db {
 // The datasource tells Prisma how to connect to your Neon database
 // directUrl is used for migrations, url is used for queries (can use connection pooling)
 
-// This block defines the structure of the "Tutor" table in your database
-model Tutor {
-  id                Int     @id @default(autoincrement())  // Primary key, auto-increments (1, 2, 3...)
-  name              String  // Text field for tutor's name
-  email             String
-  subject           String  // Text field for subject they teach
-  bio               String?
-  profilePictureUrl String? // URL to profile picture stored in Vercel Blob (optional)
-  price             Float?  // Price per hour in currency units (optional)
-  location          String? // Location as "City, Country" format (optional)
+// BLOCK: Role enum for user types
+// Defines the different types of users in the system
+enum Role {
+  TUTOR   // Tutors who offer services
+  PARENT  // Parents browsing for tutors (for future use)
+  ADMIN   // Admin users (for future use)
 }
-// The model creates a table with columns for tutor info including profile picture, price, and location
+
+// BLOCK: User model for authentication
+// Stores authentication data separate from profile data
+model User {
+  id        Int      @id @default(autoincrement())  // Primary key
+  email     String   @unique  // Email from Google OAuth, must be unique
+  role      Role     @default(TUTOR)  // User type, defaults to TUTOR
+  createdAt DateTime @default(now())  // When user was created
+  updatedAt DateTime @updatedAt  // Auto-updates when user is modified
+
+  tutor     Tutor?  // One-to-one relationship with Tutor profile
+
+  // NextAuth required relationships
+  accounts  Account[]  // OAuth accounts linked to this user
+  sessions  Session[]  // Active sessions for this user
+}
+
+// BLOCK: NextAuth Account model
+// Stores OAuth provider account information (Google, etc.)
+model Account {
+  id                String  @id @default(cuid())  // Unique ID
+  userId            Int  // Foreign key to User
+  type              String  // Account type (oauth, email, etc.)
+  provider          String  // Provider name (google, github, etc.)
+  providerAccountId String  // Provider's user ID
+  refresh_token     String? @db.Text  // OAuth refresh token
+  access_token      String? @db.Text  // OAuth access token
+  expires_at        Int?  // Token expiration timestamp
+  token_type        String?  // Token type (Bearer, etc.)
+  scope             String?  // OAuth scopes granted
+  id_token          String? @db.Text  // OpenID Connect ID token
+  session_state     String?  // OAuth session state
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])  // Prevent duplicate accounts
+}
+
+// BLOCK: NextAuth Session model
+// Stores active user sessions
+model Session {
+  id           String   @id @default(cuid())  // Unique session ID
+  sessionToken String   @unique  // Session token stored in cookie
+  userId       Int  // Foreign key to User
+  expires      DateTime  // Session expiration time
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// BLOCK: NextAuth VerificationToken model
+// Used for email verification and passwordless login
+model VerificationToken {
+  identifier String  // User identifier (email, etc.)
+  token      String  @unique  // Verification token
+  expires    DateTime  // Token expiration time
+
+  @@unique([identifier, token])  // Ensure unique identifier-token pairs
+}
+
+// BLOCK: Tutor model for profile data
+// Stores tutor profile information separate from authentication
+model Tutor {
+  id                Int      @id @default(autoincrement())  // Primary key
+  userId            Int      @unique  // Foreign key to User (one-to-one)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name              String  // Tutor's name
+  subject           String  // Subject they teach
+  bio               String?  // Optional bio
+  profilePictureUrl String?  // URL to profile picture in Vercel Blob (optional)
+  price             Float?  // Price per hour (optional)
+  location          String?  // Location as "City, Country" (optional)
+  createdAt         DateTime @default(now())  // When profile was created
+  updatedAt         DateTime @updatedAt  // Auto-updates when profile is modified
+}
+// User and Tutor are separate: User handles auth, Tutor handles profile data

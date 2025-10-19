@@ -38,14 +38,15 @@ export async function getTutorById(id: number): Promise<Tutor | null> {
 
 // BLOCK: Create new tutor
 // Creates a new tutor record in the database
+// Note: userId must be provided (from authenticated user)
 export async function createTutor(
-  data: TutorFormData & { profilePictureUrl?: string }
+  data: TutorFormData & { userId: number; profilePictureUrl?: string }
 ): Promise<Tutor> {
   try {
     const tutor = await prisma.tutor.create({
       data: {
+        userId: data.userId, // Link to authenticated user
         name: data.name,
-        email: data.email,
         subject: data.subject,
         bio: data.bio,
         price: data.price,
@@ -73,7 +74,6 @@ export async function updateTutor(
       where: { id },
       data: {
         ...(data.name && { name: data.name }),
-        ...(data.email && { email: data.email }),
         ...(data.subject && { subject: data.subject }),
         ...(data.bio !== undefined && { bio: data.bio }),
         ...(data.price !== undefined && { price: data.price }),
