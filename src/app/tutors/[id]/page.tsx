@@ -8,23 +8,22 @@
 // BLOCK: Imports
 // Import React hooks for managing state, side effects, and URL parameters
 import { useEffect, useState } from "react"; // useEffect: runs code after render, useState: manages component state
-import { useParams, useRouter } from "next/navigation"; // useParams: gets URL parameters like [id], useRouter: programmatic navigation
+import { useParams } from "next/navigation"; // useParams: gets URL parameters like [id]
 import Link from "next/link"; // Link: Next.js component for client-side navigation
 import Image from "next/image"; // Image: Next.js component for optimized images
 
 // Import Tutor type from validations
 import { Tutor } from "@/lib/validations"; // Type definition for tutor data (includes id)
+import { clientLogger } from "@/lib/logger";
 
 // BLOCK: Main component function
 // This component fetches and displays a single tutor's profile
 export default function TutorProfile() {
-  // BLOCK: Hooks for URL parameters and navigation
+  // BLOCK: Hooks for URL parameters
   // Get the dynamic [id] parameter from the URL
   const params = useParams(); // useParams(): returns object with route parameters
   const id = params.id as string; // Extract id from params object and type it as string
   // Example: if URL is /tutors/5, then id = "5"
-
-  const router = useRouter(); // useRouter(): provides navigation functions
 
   // BLOCK: State management
   // State to store the tutor data fetched from API
@@ -50,7 +49,7 @@ export default function TutorProfile() {
       // async function: allows using await inside
       try {
         // try-catch: handles errors gracefully
-        console.log("🔵 [Frontend] Fetching tutor with ID:", id);
+        clientLogger.info("Fetching tutor with ID:", id);
 
         // Make GET request to our API endpoint
         const response = await fetch(`/api/tutor/${id}`);
@@ -61,16 +60,16 @@ export default function TutorProfile() {
         if (response.ok) {
           // response.ok: true if status is 200-299
           const data = await response.json(); // Parse JSON response
-          console.log("🟢 [Frontend] Tutor data received:", data);
+          clientLogger.success("Tutor data received:", data);
           setTutor(data); // Update state with tutor data
         } else {
           // Request failed (404, 500, etc.)
-          console.error("🔴 [Frontend] Failed to fetch tutor");
+          clientLogger.error("Failed to fetch tutor");
           setError("Tutor not found"); // Set error message
         }
       } catch (err) {
         // Catch any network or parsing errors
-        console.error("🔴 [Frontend] Error fetching tutor:", err);
+        clientLogger.error("Error fetching tutor:", err);
         setError("Failed to load tutor profile"); // Set error message
       } finally {
         // finally block: runs whether try succeeded or catch caught an error

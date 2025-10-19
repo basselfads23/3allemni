@@ -1,4 +1,4 @@
-// src/components/Footer.tsx
+// src/components/layout/Footer.tsx
 // BLOCK: Global Footer Component
 // This component provides consistent footer across all pages with copyright info
 

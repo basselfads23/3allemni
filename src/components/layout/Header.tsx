@@ -1,4 +1,4 @@
-// src/components/Header.tsx
+// src/components/layout/Header.tsx
 // BLOCK: Global Header Component
 // This component provides consistent navigation across all pages
 
