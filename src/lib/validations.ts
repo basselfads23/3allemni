@@ -19,8 +19,8 @@ export const tutorSchema = z.object({
     .min(2, "Name must be at least 2 characters") // Minimum 2 characters, custom error message if fails
     .max(100, "Name must be less than 100 characters"), // Maximum 100 characters
 
-  // Validate 'email' field
-  email: z.email("Please enter a valid email address"), // z.email() validates email format directly (has @ and domain), custom error message
+  // Validate 'email' field (optional - now stored in User model from OAuth)
+  email: z.email("Please enter a valid email address").optional(), // z.email() validates email format directly (has @ and domain), custom error message
 
   // Validate 'subject' field
   subject: z

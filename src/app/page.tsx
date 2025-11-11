@@ -12,9 +12,9 @@ export default function Home() {
 
   const handleNext = () => {
     if (userType === "Tutor") {
-      router.push("/tutor");
+      router.push("/tutor/dashboard");
     } else {
-      router.push("/student");
+      router.push("/parent");
     }
   };
 
@@ -28,7 +28,7 @@ export default function Home() {
           value={userType}
           onChange={(e) => setUserType(e.target.value)}>
           <option value="Tutor">Tutor</option>
-          <option value="Student">Student</option>
+          <option value="Parent">Parent</option>
         </select>
         <button className="landing-button" onClick={handleNext}>
           Next

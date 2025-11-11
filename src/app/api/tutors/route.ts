@@ -27,17 +27,33 @@ export async function GET() {
   try {
     // try-catch block: handles errors gracefully and prevents crashes
 
-    // BLOCK: Database operation - Fetch all tutors
-    // Fetch all tutor records from Neon database using Prisma
-    const tutors = await prisma.tutor.findMany();
+    // BLOCK: Database operation - Fetch all tutors with user email
+    // Fetch all tutor records from Neon database using Prisma, including user email
+    const tutors = await prisma.tutor.findMany({
+      include: {
+        user: {
+          select: {
+            email: true,
+          },
+        },
+      },
+    });
     // await: waits for database operation to complete
     // prisma.tutor: accesses Tutor model from schema
     // .findMany(): Prisma method to retrieve all records from Tutor table
-    // Returns array of tutor objects: [{ id: 1, name: "John", subject: "Math" }, ...]
+    // include: joins with User model to get email
+    // Returns array of tutor objects with user email: [{ id: 1, name: "John", subject: "Math", user: { email: "..." } }, ...]
+
+    // Transform the data to include email at the top level for backward compatibility
+    const tutorsWithEmail = tutors.map((tutor) => ({
+      ...tutor,
+      email: tutor.user.email,
+      user: undefined, // Remove nested user object
+    }));
 
     // BLOCK: Success response
     // Return tutors array as JSON with success status
-    return NextResponse.json(tutors, { status: 200 });
+    return NextResponse.json(tutorsWithEmail, { status: 200 });
     // NextResponse.json(): creates JSON response
     // tutors: array of tutor objects to serialize to JSON
     // status: 200 means OK (success)

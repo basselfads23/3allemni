@@ -105,10 +105,10 @@ export default function TutorProfile() {
             <p className="error-text">{error}</p>
             {/* Display the error message from state */}
 
-            <Link href="/student" className="back-link">
+            <Link href="/parent" className="back-link">
               ← Back to Tutors List
             </Link>
-            {/* Link back to student page */}
+            {/* Link back to parent page */}
           </div>
         </div>
       </main>
@@ -123,7 +123,7 @@ export default function TutorProfile() {
         <div className="content-wrapper-narrow">
           <div className="card">
             <p>Tutor not found.</p>
-            <Link href="/student" className="back-link">
+            <Link href="/parent" className="back-link">
               ← Back to Tutors List
             </Link>
           </div>
@@ -138,7 +138,7 @@ export default function TutorProfile() {
     <main className="page-container">
       <div className="content-wrapper-narrow">
         {/* Back link to return to tutors list */}
-        <Link href="/student" className="back-link">
+        <Link href="/parent" className="back-link">
           ← Back to Tutors List
         </Link>
 

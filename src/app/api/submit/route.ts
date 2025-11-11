@@ -22,6 +22,9 @@ import { tutorSchema } from "@/lib/validations"; // Import validation rules to c
 // Import Vercel Blob for file uploads
 import { put } from "@vercel/blob"; // put function uploads files to Vercel Blob storage
 
+// Import NextAuth to get authenticated session
+import { auth } from "@/auth";
+
 // BLOCK: POST Handler Function
 // Export async function to handle POST requests to /api/submit endpoint
 export async function POST(req: NextRequest) {
@@ -36,6 +39,16 @@ export async function POST(req: NextRequest) {
   try {
     // try-catch block: handles errors gracefully and prevents crashes
 
+    // BLOCK: Check authentication
+    const session = await auth();
+
+    if (!session || !session.user) {
+      console.log("🔴 [API] Unauthorized request");
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    console.log("🟢 [API] Authenticated user:", session.user.email);
+
     // BLOCK: Parse and extract request data from FormData
     // Parse FormData from request body (contains both text fields and file)
     console.log("🔵 [API] Parsing FormData from request...");
@@ -44,7 +57,6 @@ export async function POST(req: NextRequest) {
 
     // Extract text fields from FormData
     const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
     const subject = formData.get("subject") as string;
     const bio = formData.get("bio") as string;
     const priceString = formData.get("price") as string | null;
@@ -62,8 +74,6 @@ export async function POST(req: NextRequest) {
     console.log(
       "🔵 [API] Extracted fields - name:",
       name,
-      "email:",
-      email,
       "subject:",
       subject,
       "bio:",
@@ -77,11 +87,10 @@ export async function POST(req: NextRequest) {
     );
 
     // BLOCK: Validate data with Zod schema
-    // Use Zod to validate all fields against our schema rules
+    // Use Zod to validate all fields against our schema rules (email not needed - from session)
     console.log("🔵 [API] Validating data with Zod...");
     const validation = tutorSchema.safeParse({
       name,
-      email,
       subject,
       bio,
       price,
@@ -147,7 +156,7 @@ export async function POST(req: NextRequest) {
     }
 
     // BLOCK: Database operation - Create tutor record
-    // Create new tutor record in Neon database using Prisma
+    // Create new tutor record in Neon database using Prisma, linked to authenticated user
     console.log("🔵 [API] Attempting to create tutor in database...");
     console.log("🔵 [API] DATABASE_URL exists:", !!process.env.DATABASE_URL);
     console.log(
@@ -163,8 +172,8 @@ export async function POST(req: NextRequest) {
       data: {
         // data property: contains fields to insert into database
         // Use validatedData instead of raw request body for security
+        userId: session.user.id, // Link to authenticated user
         name: validatedData.name, // Validated name from Zod
-        email: validatedData.email, // Validated email (guaranteed to be valid email format)
         subject: validatedData.subject, // Validated subject
         bio: validatedData.bio, // Validated bio (can be undefined since it's optional)
         price: validatedData.price, // Validated price (can be undefined since it's optional)

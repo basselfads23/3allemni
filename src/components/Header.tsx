@@ -18,10 +18,10 @@ export default function Header() {
 
         {/* BLOCK: Navigation links on the right */}
         <nav className="header-nav">
-          <Link href="/student" className="header-link">
+          <Link href="/parent" className="header-link">
             Find a Tutor
           </Link>
-          <Link href="/tutor" className="header-link">
+          <Link href="/tutor/dashboard" className="header-link">
             Become a Tutor
           </Link>
         </nav>

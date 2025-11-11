@@ -53,8 +53,8 @@ export async function GET(
       // status: 400 means Bad Request (client sent invalid data)
     }
 
-    // BLOCK: Database operation - Find tutor by ID
-    // Query database to find tutor with matching ID
+    // BLOCK: Database operation - Find tutor by ID with user email
+    // Query database to find tutor with matching ID and include user email
     console.log("🔵 [API] Querying database for tutor with ID:", tutorId);
     const tutor = await prisma.tutor.findUnique({
       // await: waits for database operation to complete
@@ -64,8 +64,15 @@ export async function GET(
         // where clause: specifies which record to find
         id: tutorId, // Find tutor where id field matches tutorId
       },
+      include: {
+        user: {
+          select: {
+            email: true,
+          },
+        },
+      },
     });
-    // Returns tutor object if found, or null if not found
+    // Returns tutor object with user email if found, or null if not found
 
     // BLOCK: Handle tutor not found
     // Check if tutor exists in database
@@ -78,9 +85,16 @@ export async function GET(
 
     console.log("🟢 [API] Tutor found successfully:", tutor);
 
+    // Transform the data to include email at the top level for backward compatibility
+    const tutorWithEmail = {
+      ...tutor,
+      email: tutor.user.email,
+      user: undefined, // Remove nested user object
+    };
+
     // BLOCK: Success response
     // Return the tutor as JSON with success status
-    return NextResponse.json(tutor, { status: 200 });
+    return NextResponse.json(tutorWithEmail, { status: 200 });
     // NextResponse.json(): creates JSON response
     // tutor: JavaScript object to serialize to JSON
     // status: 200 means OK (success)
