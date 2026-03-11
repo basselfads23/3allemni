@@ -3,8 +3,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header"; // Import global Header component
-import Footer from "@/components/Footer"; // Import global Footer component
+import Header from "@/components/layout/Header"; // Import global Header component
+import Footer from "@/components/layout/Footer"; // Import global Footer component
+import { APP_CONFIG } from "@/lib/constants"; // Import app configuration
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "3allemni",
-  description: "Learn with trust",
+  title: APP_CONFIG.name,
+  description: APP_CONFIG.tagline,
   icons: {
     icon: "/file.svg",
   },

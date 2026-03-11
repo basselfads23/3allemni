@@ -14,7 +14,7 @@ export default function Home() {
     if (userType === "Tutor") {
       router.push("/tutor");
     } else {
-      router.push("/student");
+      router.push("/parent");
     }
   };
 
@@ -22,13 +22,13 @@ export default function Home() {
     <div className="landing-container">
       <div className="landing-content">
         <h1 className="landing-title">Welcome to 3allemni!</h1>
-        <p className="landing-text">Are you a tutor or a student/parent?</p>
+        <p className="landing-text">Are you a tutor or a parent?</p>
         <select
           className="landing-select"
           value={userType}
           onChange={(e) => setUserType(e.target.value)}>
           <option value="Tutor">Tutor</option>
-          <option value="Student">Student</option>
+          <option value="Parent">Parent</option>
         </select>
         <button className="landing-button" onClick={handleNext}>
           Next

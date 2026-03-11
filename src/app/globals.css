@@ -280,6 +280,13 @@ input[type="file"].form-input {
   font-weight: 500; /* Medium weight */
 }
 
+/* File input feedback message */
+.file-feedback {
+  margin-top: 0.5rem; /* 8px top margin */
+  font-size: 0.875rem; /* 14px */
+  color: #4b5563; /* Medium gray */
+}
+
 /* Form submit button */
 .form-button {
   margin-top: 0.5rem; /* 8px top margin */
