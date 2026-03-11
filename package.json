@@ -10,14 +10,14 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@next-auth/prisma-adapter": "^1.0.7",
+    "@auth/prisma-adapter": "^2.7.4",
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
     "@prisma/config": "^7.5.0",
     "@types/pg": "^8.18.0",
     "@vercel/blob": "^2.0.0",
     "dotenv": "^17.3.1",
-    "next": "15.5.4",
+    "next": "15.5.9",
     "next-auth": "^5.0.0-beta.29",
     "pg": "^8.20.0",
     "react": "19.1.0",
