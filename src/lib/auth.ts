@@ -20,6 +20,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          prompt: "select_account",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
     }),
   ],
 
@@ -31,7 +38,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // This makes user.id and user.role available in session
     session: async ({ session, user }) => {
       // Type assertion: Adapter returns full user with id and role from database
-      const dbUser = user as unknown as { id: number; role: Role };
+      const dbUser = user as unknown as { id: string; role: Role };
       return {
         ...session,
         user: {

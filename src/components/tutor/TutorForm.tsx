@@ -5,19 +5,22 @@
 "use client";
 
 import { useState } from "react";
-import { tutorSchema } from "@/lib/validations";
+import { tutorSchema, Tutor } from "@/lib/validations";
 import { SUBJECTS } from "@/lib/constants";
+
+type TutorFormProps = {
+  initialData?: Tutor | null;
+};
 
 // BLOCK: TutorForm component
 // Form for registering new tutors with validation
-export default function TutorForm() {
+export default function TutorForm({ initialData }: TutorFormProps) {
   // BLOCK: State variables for form fields
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState("");
-  const [bio, setBio] = useState("");
-  const [price, setPrice] = useState("");
-  const [location, setLocation] = useState("");
+  const [name, setName] = useState(initialData?.name || "");
+  const [subject, setSubject] = useState(initialData?.subject || "");
+  const [bio, setBio] = useState(initialData?.bio || "");
+  const [price, setPrice] = useState(initialData?.price ? initialData.price.toString() : "");
+  const [location, setLocation] = useState(initialData?.location || "");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
 
   // BLOCK: State for validation errors
@@ -36,7 +39,6 @@ export default function TutorForm() {
     // Prepare form data for validation
     const validationData = {
       name,
-      email,
       subject,
       bio,
       price: price === "" ? undefined : parseFloat(price),
@@ -62,7 +64,6 @@ export default function TutorForm() {
     // Submit validated data to API
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("email", email);
     formData.append("subject", subject);
     formData.append("bio", bio);
 
@@ -79,24 +80,25 @@ export default function TutorForm() {
     }
 
     const res = await fetch("/api/submit", {
-      method: "POST",
+      method: "POST", // We'll handle both create and update in POST
       body: formData,
     });
 
     // Handle API response
     if (res.ok) {
-      alert("Form submitted successfully!");
-      // Clear all form fields
-      setName("");
-      setEmail("");
-      setSubject("");
-      setBio("");
-      setPrice("");
-      setLocation("");
+      alert("Profile saved successfully!");
+      if (!initialData) {
+        // Clear all form fields if it was a new creation
+        setName("");
+        setSubject("");
+        setBio("");
+        setPrice("");
+        setLocation("");
+      }
       setProfilePicture(null);
       setFileInputKey((prev) => prev + 1);
     } else {
-      alert("Form submission failed.");
+      alert("Submission failed.");
     }
   };
 
@@ -120,24 +122,6 @@ export default function TutorForm() {
         {errors.name && <p className="form-error">{errors.name}</p>}
       </div>
 
-      {/* BLOCK: Email field */}
-      <div className="form-field">
-        <label htmlFor="email" className="form-label">
-          Email
-        </label>
-
-        <input
-          type="text"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="form-input"
-          required
-        />
-
-        {errors.email && <p className="form-error">{errors.email}</p>}
-      </div>
-
       {/* BLOCK: Subject field */}
       <div className="form-field">
         <label htmlFor="subject" className="form-label">
@@ -155,9 +139,9 @@ export default function TutorForm() {
           </option>
 
           {/* Dynamically generate subject options from constants */}
-          {SUBJECTS.map((subject) => (
-            <option key={subject} value={subject}>
-              {subject}
+          {SUBJECTS.map((subjectItem) => (
+            <option key={subjectItem} value={subjectItem}>
+              {subjectItem}
             </option>
           ))}
         </select>
@@ -223,6 +207,10 @@ export default function TutorForm() {
         <label htmlFor="profilePicture" className="form-label">
           Profile Picture (Optional)
         </label>
+        
+        {initialData?.profilePictureUrl && (
+          <p className="file-feedback">You already have a profile picture. Uploading a new one will replace it.</p>
+        )}
 
         <input
           key={fileInputKey}
@@ -244,7 +232,7 @@ export default function TutorForm() {
 
       {/* BLOCK: Submit button */}
       <button type="submit" className="form-button">
-        Submit
+        {initialData ? "Update Profile" : "Create Profile"}
       </button>
     </form>
   );

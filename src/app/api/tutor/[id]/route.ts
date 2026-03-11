@@ -22,13 +22,13 @@ export async function GET(
     const { id } = params;
     apiLogger.info("Tutor ID from URL:", id);
 
-    // BLOCK: Convert ID to number and validate
-    const tutorId = parseInt(id, 10);
-    apiLogger.debug("Converted tutor ID to number:", tutorId);
+    // BLOCK: Use ID from URL parameters
+    const tutorId = id;
+    apiLogger.debug("Using tutor ID from params:", tutorId);
 
-    if (isNaN(tutorId)) {
-      apiLogger.error("Invalid ID - not a number");
-      return new NextResponse("Invalid tutor ID", { status: 400 });
+    if (!tutorId) {
+      apiLogger.error("Missing tutor ID");
+      return new NextResponse("Missing tutor ID", { status: 400 });
     }
 
     // BLOCK: Fetch tutor using service

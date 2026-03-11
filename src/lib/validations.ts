@@ -54,12 +54,17 @@ export type TutorFormData = z.infer<typeof tutorSchema>;
 
 // BLOCK: Database Tutor Type
 // Type for tutors fetched from database (includes auto-generated fields)
-export type Tutor = TutorFormData & {
-  id: number; // Auto-generated ID
-  userId: number; // Foreign key to User
-  profilePictureUrl?: string; // Optional profile picture from Vercel Blob
-  createdAt?: Date; // Auto-generated timestamp
-  updatedAt?: Date; // Auto-generated timestamp
+export type Tutor = {
+  id: string; // Auto-generated ID (cuid)
+  userId: string; // Foreign key to User
+  name: string;
+  subject: string;
+  bio: string | null;
+  profilePictureUrl: string | null;
+  price: number | null;
+  location: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
 // & is the "intersection" operator - combines two types
 // Takes all properties from TutorFormData AND adds the database fields

@@ -6,6 +6,8 @@
 
 // Import the PrismaClient class from Prisma package
 import { PrismaClient } from "@prisma/client"; // PrismaClient: main class for database operations, imported from generated Prisma client
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 // BLOCK: Global type augmentation for development
 // Extend the global object type to include a prisma property
@@ -17,9 +19,14 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 // BLOCK: Create or reuse Prisma Client instance
 // Export singleton Prisma Client instance
+const connectionString = `${process.env.DATABASE_URL}`;
+const pool = new Pool({ connectionString });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const adapter = new PrismaPg(pool as any);
+
 export const prisma =
   globalForPrisma.prisma || // If prisma already exists on global object, reuse it (prevents multiple instances)
-  new PrismaClient(); // Otherwise create new PrismaClient instance (first time initialization)
+  new PrismaClient({ adapter }); // Otherwise create new PrismaClient instance (first time initialization)
 // export const: makes prisma available for import in other files
 // ||: logical OR operator - returns first truthy value
 // This pattern ensures only one client instance exists

@@ -3,7 +3,8 @@
 // Business logic for tutor-related operations
 
 import { prisma } from "@/lib/prisma";
-import { TutorFormData, Tutor } from "@/lib/validations";
+import { TutorFormData } from "@/lib/validations";
+import { type Tutor } from "@prisma/client";
 import { serviceLogger } from "@/lib/logger";
 
 // BLOCK: Get all tutors
@@ -24,7 +25,7 @@ export async function getAllTutors(): Promise<Tutor[]> {
 
 // BLOCK: Get tutor by ID
 // Fetches a single tutor by their ID
-export async function getTutorById(id: number): Promise<Tutor | null> {
+export async function getTutorById(id: string): Promise<Tutor | null> {
   try {
     const tutor = await prisma.tutor.findUnique({
       where: { id },
@@ -36,11 +37,25 @@ export async function getTutorById(id: number): Promise<Tutor | null> {
   }
 }
 
+// BLOCK: Get tutor by user ID
+// Fetches a single tutor by their associated user ID
+export async function getTutorByUserId(userId: string): Promise<Tutor | null> {
+  try {
+    const tutor = await prisma.tutor.findUnique({
+      where: { userId },
+    });
+    return tutor as Tutor | null;
+  } catch (error) {
+    serviceLogger.error(`Error fetching tutor for user ID ${userId}:`, error);
+    throw new Error("Failed to fetch tutor by user ID");
+  }
+}
+
 // BLOCK: Create new tutor
 // Creates a new tutor record in the database
 // Note: userId must be provided (from authenticated user)
 export async function createTutor(
-  data: TutorFormData & { userId: number; profilePictureUrl?: string }
+  data: TutorFormData & { userId: string; profilePictureUrl?: string },
 ): Promise<Tutor> {
   try {
     const tutor = await prisma.tutor.create({
@@ -66,8 +81,8 @@ export async function createTutor(
 // BLOCK: Update tutor
 // Updates an existing tutor's information
 export async function updateTutor(
-  id: number,
-  data: Partial<TutorFormData> & { profilePictureUrl?: string }
+  id: string,
+  data: Partial<TutorFormData> & { profilePictureUrl?: string },
 ): Promise<Tutor> {
   try {
     const tutor = await prisma.tutor.update({
@@ -94,7 +109,7 @@ export async function updateTutor(
 
 // BLOCK: Delete tutor
 // Deletes a tutor from the database
-export async function deleteTutor(id: number): Promise<void> {
+export async function deleteTutor(id: string): Promise<void> {
   try {
     await prisma.tutor.delete({
       where: { id },

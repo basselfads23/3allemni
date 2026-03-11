@@ -7,22 +7,29 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { tutorSchema } from "@/lib/validations";
-import { createTutor } from "@/services/tutorService";
+import { createTutor, updateTutor, getTutorByUserId } from "@/services/tutorService";
 import { uploadProfilePicture } from "@/services/uploadService";
 import { apiLogger } from "@/lib/logger";
+import { auth } from "@/lib/auth";
 
 // BLOCK: POST Handler Function
 export async function POST(req: NextRequest) {
   apiLogger.info("POST /api/submit - Function called");
 
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const userId = session.user.id as string;
+
     // BLOCK: Parse FormData
     apiLogger.info("Parsing FormData from request...");
     const formData = await req.formData();
     apiLogger.success("FormData parsed successfully");
 
     // Extract fields from FormData
-    // Note: Email is no longer needed here - it comes from User model (OAuth)
     const name = formData.get("name") as string;
     const subject = formData.get("subject") as string;
     const bio = formData.get("bio") as string;
@@ -78,17 +85,26 @@ export async function POST(req: NextRequest) {
       apiLogger.info("No profile picture provided");
     }
 
-    // BLOCK: Create tutor in database
-    // TODO: Replace with actual userId from authenticated session
-    // This temporary userId will be replaced when dashboard is implemented
-    apiLogger.info("Creating tutor in database...");
-    const tutor = await createTutor({
-      ...validatedData,
-      userId: 1, // Temporary: will use session.user.id from dashboard
-      profilePictureUrl,
-    });
+    // BLOCK: Check if tutor profile already exists
+    const existingTutor = await getTutorByUserId(userId);
 
-    apiLogger.success("Tutor created successfully:", tutor.id);
+    let tutor;
+    if (existingTutor) {
+      apiLogger.info("Updating tutor in database...");
+      tutor = await updateTutor(existingTutor.id, {
+        ...validatedData,
+        ...(profilePictureUrl && { profilePictureUrl }),
+      });
+      apiLogger.success("Tutor updated successfully:", tutor.id);
+    } else {
+      apiLogger.info("Creating tutor in database...");
+      tutor = await createTutor({
+        ...validatedData,
+        userId,
+        profilePictureUrl,
+      });
+      apiLogger.success("Tutor created successfully:", tutor.id);
+    }
 
     // BLOCK: Success response
     return NextResponse.json(tutor, { status: 200 });
