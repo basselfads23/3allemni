@@ -13,6 +13,7 @@ import { Role } from "@prisma/client";
 export const { handlers, auth, signIn, signOut } = NextAuth({
   // Use Prisma adapter to store users, accounts, and sessions in database
   adapter: PrismaAdapter(prisma),
+  trustHost: true,
 
   // BLOCK: Authentication providers
   // Configure OAuth providers (currently only Google)
