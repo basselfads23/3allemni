@@ -1,39 +1,27 @@
 // src/app/page.tsx
+// BLOCK: Landing Page
+// Allows users to choose their role (Tutor or Parent)
+// Added forced sign-out logic as requested for step-by-step debugging
 
-"use client";
+import { auth } from "@/lib/auth";
+import HomeClient from "@/components/home/HomeClient";
+import SignOutOnLanding from "@/components/auth/SignOutOnLanding";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
-export default function Home() {
-  const [userType, setUserType] = useState("Tutor");
-
-  const router = useRouter();
-
-  const handleNext = () => {
-    if (userType === "Tutor") {
-      router.push("/tutor");
-    } else {
-      router.push("/parent");
-    }
-  };
+export default async function Home() {
+  const session = await auth();
 
   return (
-    <div className="landing-container">
-      <div className="landing-content">
-        <h1 className="landing-title">Welcome to 3allemni!</h1>
-        <p className="landing-text">Are you a tutor or a parent?</p>
-        <select
-          className="landing-select"
-          value={userType}
-          onChange={(e) => setUserType(e.target.value)}>
-          <option value="Tutor">Tutor</option>
-          <option value="Parent">Parent</option>
-        </select>
-        <button className="landing-button" onClick={handleNext}>
-          Next
-        </button>
+    <main>
+      {/* If user lands here and is signed in, force sign out for debugging */}
+      {session && <SignOutOnLanding />}
+      
+      <div className="landing-container">
+        <div className="landing-content">
+          <h1 className="landing-title">Welcome to 3allemni!</h1>
+          <p className="landing-text">Are you a tutor or a parent?</p>
+          <HomeClient />
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

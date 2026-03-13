@@ -3,7 +3,8 @@
 // This component provides consistent navigation across all pages
 
 import Link from "next/link";
-import { auth, signIn, signOut } from "@/lib/auth";
+import { auth } from "@/lib/auth";
+import AuthButtons from "@/components/auth/AuthButtons";
 
 export default async function Header() {
   const session = await auth();
@@ -20,34 +21,7 @@ export default async function Header() {
             Find a Tutor
           </Link>
           
-          {session ? (
-            <>
-              <Link href="/tutor" className="header-link font-semibold">
-                Dashboard
-              </Link>
-              <form
-                action={async () => {
-                  "use server";
-                  await signOut({ redirectTo: "/parent" });
-                }}
-              >
-                <button type="submit" className="header-link text-red-500">
-                  Sign Out
-                </button>
-              </form>
-            </>
-          ) : (
-            <form
-              action={async () => {
-                "use server";
-                await signIn("google", { redirectTo: "/tutor" });
-              }}
-            >
-              <button type="submit" className="header-link text-blue-600 font-semibold">
-                Sign In / Register
-              </button>
-            </form>
-          )}
+          <AuthButtons session={session} />
         </nav>
       </div>
     </header>
