@@ -34,22 +34,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
 
   // BLOCK: Callbacks for customizing behavior
-  // Modify session data and handle sign-in events
   callbacks: {
     // BLOCK: Session callback
-    // Adds user ID and role to session object
-    // This makes user.id and user.role available in session
     session: async ({ session, user }) => {
-      // Type assertion: Adapter returns full user with id and role from database
-      const dbUser = user as unknown as { id: string; role: Role };
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: dbUser.id,
-          role: dbUser.role,
-        },
-      };
+      try {
+        // Type assertion: Adapter returns full user with id and role from database
+        const dbUser = user as unknown as { id: string; role: Role };
+        
+        if (!dbUser) {
+          console.error("[Auth] No dbUser found in session callback");
+          return session;
+        }
+
+        return {
+          ...session,
+          user: {
+            ...session.user,
+            id: dbUser.id,
+            role: dbUser.role || Role.TUTOR, // Default fallback if missing
+          },
+        };
+      } catch (error) {
+        console.error("[Auth] Error in session callback:", error);
+        return session;
+      }
     },
   },
 
