@@ -1,104 +1,92 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-// This block tells Prisma how to generate the client library
 generator client {
-  provider = "prisma-client-js"  // Use the JavaScript/TypeScript client
+  provider = "prisma-client-js"
 }
-// The generator creates code you'll import to interact with the database
 
-// This block defines where your database is and what type it is
 datasource db {
-  provider = "postgresql"  // We're using PostgreSQL (Neon uses Postgres)
+  provider = "postgresql"
+  url      = process.env.DATABASE_URL
 }
-// The datasource tells Prisma how to connect to your Neon database
-// directUrl is used for migrations, url is used for queries (can use connection pooling)
 
-// BLOCK: Role enum for user types
-// Defines the different types of users in the system
 enum Role {
-  TUTOR   // Tutors who offer services
-  PARENT  // Parents browsing for tutors (for future use)
-  ADMIN   // Admin users (for future use)
+  TUTOR
+  PARENT
+  ADMIN
 }
 
-// BLOCK: User model for authentication
-// Stores authentication data separate from profile data
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
+  id            String    @id @default(uuid())
+  email         String    @unique
   name          String?
   image         String?
   emailVerified DateTime?
  
-  role          Role     @default(TUTOR) 
-  createdAt     DateTime @default(now()) 
-  updatedAt     DateTime @updatedAt  
+  role          Role      @default(TUTOR) 
+  createdAt     DateTime  @default(now()) 
+  updatedAt     DateTime  @updatedAt  
 
   tutor     Tutor?
   accounts  Account[]
   sessions  Session[]
+
+  @@map("users")
 }
 
-// BLOCK: NextAuth Account model
-// Stores OAuth provider account information (Google, etc.)
 model Account {
-  id                String  @id @default(cuid())  // Unique ID
-  userId            String // Foreign key to User
-  type              String  // Account type (oauth, email, etc.)
-  provider          String  // Provider name (google, github, etc.)
-  providerAccountId String  // Provider's user ID
-  refresh_token     String? @db.Text  // OAuth refresh token
-  access_token      String? @db.Text  // OAuth access token
-  expires_at        Int?  // Token expiration timestamp
-  token_type        String?  // Token type (Bearer, etc.)
-  scope             String?  // OAuth scopes granted
-  id_token          String? @db.Text  // OpenID Connect ID token
-  session_state     String?  // OAuth session state
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])  // Prevent duplicate accounts
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
-// BLOCK: NextAuth Session model
-// Stores active user sessions
 model Session {
-  id           String   @id @default(cuid())  // Unique session ID
-  sessionToken String   @unique  // Session token stored in cookie
-  userId       String  // Foreign key to User
-  expires      DateTime  // Session expiration time
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
-// BLOCK: NextAuth VerificationToken model
-// Used for email verification and passwordless login
 model VerificationToken {
-  identifier String  // User identifier (email, etc.)
-  token      String  @unique  // Verification token
-  expires    DateTime  // Token expiration time
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-  @@unique([identifier, token])  // Ensure unique identifier-token pairs
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }
 
-// BLOCK: Tutor model for profile data
-// Stores tutor profile information separate from authentication
 model Tutor {
-  id                String      @id @default(cuid())  // Primary key
-  userId            String      @unique  // Foreign key to User (one-to-one)
+  id                String      @id @default(cuid())
+  userId            String      @unique
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  name              String  // Tutor's name
-  subject           String  // Subject they teach
-  bio               String?  // Optional bio
-  profilePictureUrl String?  // URL to profile picture in Vercel Blob (optional)
-  price             Float?  // Price per hour (optional)
-  location          String?  // Location as "City, Country" (optional)
-  createdAt         DateTime @default(now())  // When profile was created
-  updatedAt         DateTime @updatedAt  // Auto-updates when profile is modified
+  name              String
+  subject           String
+  bio               String?
+  profilePictureUrl String?
+  price             Float?
+  location          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("tutors")
 }
-// User and Tutor are separate: User handles auth, Tutor handles profile data
