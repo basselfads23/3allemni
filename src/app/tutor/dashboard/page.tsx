@@ -40,7 +40,7 @@ export default async function TutorDashboard() {
               </div>
             ) : (
               <div className="text-center">
-                <p className="landing-text mb-6">You haven't created a tutor profile yet. Set one up to start being discovered by parents!</p>
+                <p className="landing-text mb-6">You haven&apos;t created a tutor profile yet. Set one up to start being discovered by parents!</p>
                 <Link href="/tutor/profile" className="form-button text-center no-underline block px-8">
                   Create Tutor Profile
                 </Link>
