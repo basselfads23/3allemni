@@ -21,12 +21,16 @@ export async function GET() {
     let prismaError = null;
     try {
       await prisma.tutor.findMany({ take: 1 });
-    } catch (e: any) {
-      prismaError = {
-        message: e.message,
-        code: e.code,
-        meta: e.meta
-      };
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        prismaError = {
+          message: e.message,
+          code: (e as any).code,
+          meta: (e as any).meta
+        };
+      } else {
+        prismaError = { message: "Unknown Prisma error" };
+      }
     }
 
     return NextResponse.json({
