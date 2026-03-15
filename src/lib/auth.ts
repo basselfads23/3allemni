@@ -29,14 +29,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
 
   // Log all database calls during authentication
+  // Corrected signature for NextAuth v5 logger
   logger: {
-    error(code, metadata) {
-      console.error("[Auth] CRITICAL ERROR:", { code, metadata });
+    error(error: Error) {
+      console.error("[Auth] CRITICAL ERROR:", error.name, error.message);
     },
-    warn(code) {
+    warn(code: string) {
       console.warn("[Auth] WARNING:", code);
     },
-    debug(code, metadata) {
+    debug(code: string, metadata?: unknown) {
       console.log("[Auth] DEBUG:", { code, metadata });
     },
   },
