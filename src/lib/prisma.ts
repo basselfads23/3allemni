@@ -1,19 +1,21 @@
 // src/lib/prisma.ts
-// BLOCK: Prisma Client Singleton
-// Optimized for production stability on Vercel
-
 import { PrismaClient } from "@prisma/client";
 
-// BLOCK: Global type augmentation
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-// BLOCK: Create or reuse Prisma Client instance
-// Using the standard PrismaClient is more reliable for SSL handling in serverless Node.js
+console.log("[Prisma] Initializing client... URL defined:", !!process.env.DATABASE_URL);
+
 export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    log: ["query", "error", "warn"],
   });
 
-// BLOCK: Store instance globally in development
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+// Self-invoking check for production connectivity
+if (process.env.NODE_ENV === "production") {
+  prisma.$connect()
+    .then(() => console.log("[Prisma] Database connection successful"))
+    .catch((err) => console.error("[Prisma] Database connection failed:", err));
+}

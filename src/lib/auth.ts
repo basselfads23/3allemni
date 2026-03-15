@@ -11,11 +11,35 @@ import { Role } from "@prisma/client";
 // BLOCK: NextAuth configuration
 // Configures authentication providers, callbacks, and session management
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  // Use Prisma adapter to store users, accounts, and sessions in database
   adapter: PrismaAdapter(prisma),
   trustHost: true,
   secret: process.env.AUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  debug: true, // Force debug mode for more Vercel logs
+
+  events: {
+    async signIn(message) {
+      console.log("[Auth] Event: signIn successful for user:", message.user.email);
+    },
+    async createUser(message) {
+      console.log("[Auth] Event: createUser successful:", message.user.email);
+    },
+    async linkAccount(message) {
+      console.log("[Auth] Event: linkAccount successful:", message.account.provider);
+    },
+  },
+
+  // Log all database calls during authentication
+  logger: {
+    error(code, metadata) {
+      console.error("[Auth] CRITICAL ERROR:", { code, metadata });
+    },
+    warn(code) {
+      console.warn("[Auth] WARNING:", code);
+    },
+    debug(code, metadata) {
+      console.log("[Auth] DEBUG:", { code, metadata });
+    },
+  },
 
   // BLOCK: Authentication providers
   // Configure OAuth providers (currently only Google)
