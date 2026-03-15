@@ -24,16 +24,17 @@ if (process.env.NODE_ENV === "production") {
         // Smoke test for the accounts table
         const count = await prisma.account.count();
         console.log(`[Prisma] Smoke test: 'accounts' table found in current schema. Count: ${count}`);
-      } catch (err: any) {
-        console.error("[Prisma] Smoke test failed for 'accounts' table:", err.message);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : "Unknown error";
+        console.error("[Prisma] Smoke test failed for 'accounts' table:", errorMessage);
         
         // Attempt to find where the 'accounts' table might be
         try {
-          const tableLocations: any[] = await prisma.$queryRaw`
+          const tableLocations = await prisma.$queryRaw`
             SELECT table_schema, table_name 
             FROM information_schema.tables 
             WHERE table_name = 'accounts' OR table_name = 'Account'
-          `;
+          ` as Array<{ table_schema: string, table_name: string }>;
           
           if (tableLocations.length > 0) {
             console.log("[Prisma] Found 'accounts' table in these locations:", 
@@ -43,9 +44,10 @@ if (process.env.NODE_ENV === "production") {
             console.log("[Prisma] 'accounts' or 'Account' table NOT FOUND in ANY schema in this database.");
             
             // List ALL tables in 'public' just to see what's there
-            const publicTables: any[] = await prisma.$queryRaw`
+            const publicTables = await prisma.$queryRaw`
               SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'
-            `;
+            ` as Array<{ table_name: string }>;
+            
             console.log("[Prisma] Tables visible in 'public' schema:", 
               publicTables.length > 0 ? publicTables.map(t => t.table_name).join(", ") : "NONE"
             );
