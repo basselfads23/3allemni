@@ -18,15 +18,15 @@ export async function GET() {
     const rawTutors = await prisma.$queryRaw`SELECT * FROM tutors LIMIT 1`;
 
     // 4. Specifically check for the error-causing Prisma query
-    let prismaError = null;
+    let prismaError: { message: string; code?: string; meta?: unknown } | null = null;
     try {
       await prisma.tutor.findMany({ take: 1 });
     } catch (e: unknown) {
       if (e instanceof Error) {
         prismaError = {
           message: e.message,
-          code: (e as any).code,
-          meta: (e as any).meta
+          code: (e as Record<string, unknown>).code as string | undefined,
+          meta: (e as Record<string, unknown>).meta
         };
       } else {
         prismaError = { message: "Unknown Prisma error" };
