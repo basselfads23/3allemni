@@ -10,32 +10,38 @@ export default async function Header() {
 
   return (
     <header className="header">
-      <div className="header-content flex items-center justify-between">
-        <Link href="/" className="header-logo">
-          3allemni
-        </Link>
-
-        <nav className="header-nav flex items-center gap-4">
-          <Link href="/parent" className="header-link">
-            Find a Tutor
+      <div className="header-content">
+        {/* Left section: Logo and navigation links */}
+        <div className="header-left">
+          <Link href="/" className="header-logo">
+            3allemni
           </Link>
-          
-          {session ? (
-            <>
+
+          <nav className="header-nav">
+            <Link href="/parent" className="header-link">
+              Find a Tutor
+            </Link>
+            {session && (
               <Link href="/tutor" className="header-link font-semibold">
                 Dashboard
               </Link>
-              <form
-                action={async () => {
-                  "use server";
-                  await signOut({ redirectTo: "/parent" });
-                }}
-              >
-                <button type="submit" className="header-link text-red-500">
-                  Sign Out
-                </button>
-              </form>
-            </>
+            )}
+          </nav>
+        </div>
+
+        {/* Right section: Authentication buttons */}
+        <div className="header-auth">
+          {session ? (
+            <form
+              action={async () => {
+                "use server";
+                await signOut({ redirectTo: "/parent" });
+              }}
+            >
+              <button type="submit" className="header-link text-red-500">
+                Sign Out
+              </button>
+            </form>
           ) : (
             <form
               action={async () => {
@@ -48,7 +54,7 @@ export default async function Header() {
               </button>
             </form>
           )}
-        </nav>
+        </div>
       </div>
     </header>
   );

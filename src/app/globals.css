@@ -65,7 +65,20 @@ body {
   margin: 0 auto; /* Center horizontally */
   padding: 1rem 2rem; /* 16px top/bottom, 32px left/right */
   display: flex; /* Flexbox layout */
-  justify-content: space-between; /* Space between logo and nav */
+  justify-content: space-between; /* Space between left and right groups */
+  align-items: center; /* Vertically center */
+}
+
+/* Container for logo and nav links */
+.header-left {
+  display: flex; /* Flexbox layout */
+  align-items: center; /* Vertically center logo and nav */
+  gap: 3rem; /* Spacing between logo and the nav link group */
+}
+
+/* Container for auth buttons */
+.header-auth {
+  display: flex; /* Flexbox layout */
   align-items: center; /* Vertically center */
 }
 
@@ -76,6 +89,7 @@ body {
   color: #3b82f6; /* Blue text */
   text-decoration: none; /* No underline */
   transition: color 0.2s; /* Smooth color transition */
+  flex-shrink: 0; /* Don't shrink logo */
 }
 
 /* Logo hover state */
@@ -86,7 +100,8 @@ body {
 /* Navigation container */
 .header-nav {
   display: flex; /* Flexbox layout */
-  gap: 2rem; /* 32px spacing between links */
+  align-items: center; /* Vertically center items */
+  gap: 2rem; /* 32px spacing between items */
 }
 
 /* Navigation link */
