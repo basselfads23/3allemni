@@ -1,25 +1,33 @@
 // 🛠️ Utility Functions
 // Reusable helper functions used throughout the application
 
-// 💰 Format price for display
-// Converts a number to a formatted currency string
+// 💰 Format hourly rate for display
 export function formatPrice(price: number | null | undefined): string {
   if (price === null || price === undefined || isNaN(price)) {
-    return "Price not specified";
+    return "Rate not specified";
   }
-  if (price < 0) {
-    return "Invalid price";
-  }
-  return `$${price.toFixed(2)}/hour`;
+  return `$${price.toFixed(2)}/hr`;
 }
 
 // 📍 Format location for display
-// Handles null/undefined locations gracefully
-export function formatLocation(location: string | null | undefined): string {
-  if (!location || location.trim() === "") {
-    return "Location not specified";
+export function formatLocation(
+  governorate: string | null | undefined,
+  district: string | null | undefined,
+  city: string | null | undefined
+): string {
+  const parts = [city, district, governorate].filter(Boolean);
+  if (parts.length === 0) return "Location not specified";
+  return parts.join(", ");
+}
+
+// 🏫 Format teaching mode
+export function formatTeachingMode(mode: string | null | undefined): string {
+  switch (mode) {
+    case "IN_PERSON": return "In Person";
+    case "ONLINE": return "Online";
+    case "BOTH": return "In Person & Online";
+    default: return "Mode not specified";
   }
-  return location;
 }
 
 // 📧 Validate email format

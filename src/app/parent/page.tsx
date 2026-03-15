@@ -1,36 +1,25 @@
 // src/app/parent/page.tsx
-// BLOCK: Student Browse Page
-// Displays all tutors with filtering capabilities
-
 "use client";
 
 import { useEffect, useState } from "react";
 import { Tutor } from "@/lib/validations";
-import { getUniqueValues } from "@/lib/utils";
 import TutorCard from "@/components/tutor/TutorCard";
 import TutorFilters from "@/components/tutor/TutorFilters";
 import { clientLogger } from "@/lib/logger";
 
-// BLOCK: Main component function
 export default function Home() {
-  // BLOCK: State management
   const [tutors, setTutors] = useState<Tutor[]>([]);
-
-  // State variable to store the currently selected subject filter
-  const [selectedSubject, setSelectedSubject] =
-    useState<string>("All Subjects");
-
-  const [selectedLocation, setSelectedLocation] =
-    useState<string>("All Locations");
+  const [selectedSubject, setSelectedSubject] = useState<string>("All Subjects");
+  const [selectedGovernorate, setSelectedGovernorate] = useState<string>("All Governorates");
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("All Districts");
+  const [selectedTeachingMode, setSelectedTeachingMode] = useState<string>("All Modes");
 
   useEffect(() => {
     const fetchTutors = async () => {
       try {
         const response = await fetch("/api/tutors");
-
         if (response.ok) {
           const data = await response.json();
-
           setTutors(data);
         } else {
           clientLogger.error("Failed to fetch tutors");
@@ -39,24 +28,16 @@ export default function Home() {
         clientLogger.error("Error fetching tutors:", error);
       }
     };
-
-    // Execute the fetch function immediately
-    fetchTutors(); // Call the function we just defined
+    fetchTutors();
   }, []);
 
-  const uniqueLocations = getUniqueValues(tutors, "location")
-    .filter((location): location is string => location !== null)
-    .sort();
-
   const filteredTutors = tutors.filter((tutor) => {
-    const matchesSubject =
-      selectedSubject === "All Subjects" || tutor.subject === selectedSubject;
+    const matchesSubject = selectedSubject === "All Subjects" || tutor.subject === selectedSubject;
+    const matchesGov = selectedGovernorate === "All Governorates" || tutor.governorate === selectedGovernorate;
+    const matchesDist = selectedDistrict === "All Districts" || tutor.district === selectedDistrict;
+    const matchesMode = selectedTeachingMode === "All Modes" || tutor.teachingMode === selectedTeachingMode;
 
-    const matchesLocation =
-      selectedLocation === "All Locations" ||
-      tutor.location === selectedLocation;
-
-    return matchesSubject && matchesLocation;
+    return matchesSubject && matchesGov && matchesDist && matchesMode;
   });
 
   return (
@@ -66,10 +47,16 @@ export default function Home() {
 
         <TutorFilters
           selectedSubject={selectedSubject}
-          selectedLocation={selectedLocation}
-          uniqueLocations={uniqueLocations}
+          selectedGovernorate={selectedGovernorate}
+          selectedDistrict={selectedDistrict}
+          selectedTeachingMode={selectedTeachingMode}
           onSubjectChange={setSelectedSubject}
-          onLocationChange={setSelectedLocation}
+          onGovernorateChange={(gov) => {
+            setSelectedGovernorate(gov);
+            setSelectedDistrict("All Districts");
+          }}
+          onDistrictChange={setSelectedDistrict}
+          onTeachingModeChange={setSelectedTeachingMode}
         />
 
         {filteredTutors.length > 0 ? (
@@ -79,7 +66,7 @@ export default function Home() {
             ))}
           </ul>
         ) : (
-          <p className="empty-message">No tutors available.</p>
+          <p className="empty-message">No tutors found matching your filters.</p>
         )}
       </div>
     </main>

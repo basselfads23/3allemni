@@ -1,236 +1,172 @@
 // src/components/tutor/TutorForm.tsx
-// BLOCK: Tutor Registration Form Component
-// Handles tutor registration with validation and file upload
-
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { tutorSchema, Tutor } from "@/lib/validations";
 import { SUBJECTS } from "@/lib/constants";
+import { LEBANON_LOCATIONS, Governorate } from "@/lib/lebanon-locations";
 
 type TutorFormProps = {
   initialData?: Tutor | null;
 };
 
-// BLOCK: TutorForm component
-// Form for registering new tutors with validation
 export default function TutorForm({ initialData }: TutorFormProps) {
-  // BLOCK: State variables for form fields
   const [name, setName] = useState(initialData?.name || "");
   const [subject, setSubject] = useState(initialData?.subject || "");
   const [bio, setBio] = useState(initialData?.bio || "");
-  const [price, setPrice] = useState(initialData?.price ? initialData.price.toString() : "");
-  const [location, setLocation] = useState(initialData?.location || "");
+  const [hourlyRate, setHourlyRate] = useState(initialData?.hourlyRate ? initialData.hourlyRate.toString() : "");
+  const [teachingMode, setTeachingMode] = useState(initialData?.teachingMode || "IN_PERSON");
+  const [governorate, setGovernorate] = useState<string>(initialData?.governorate || "");
+  const [district, setDistrict] = useState(initialData?.district || "");
+  const [city, setCity] = useState(initialData?.city || "");
+  const [email, setEmail] = useState(initialData?.email || "");
+  const [phoneNumber, setPhoneNumber] = useState(initialData?.phoneNumber || "");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
 
-  // BLOCK: State for validation errors
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // BLOCK: State for file input reference
-  const [fileInputKey, setFileInputKey] = useState(0);
+  // Reset district when governorate changes
+  useEffect(() => {
+    if (governorate && initialData?.governorate !== governorate) {
+      setDistrict("");
+    }
+  }, [governorate, initialData?.governorate]);
 
-  // BLOCK: Form submission handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Clear previous errors
     setErrors({});
 
-    // Prepare form data for validation
     const validationData = {
       name,
       subject,
       bio,
-      price: price === "" ? undefined : parseFloat(price),
-      location: location === "" ? undefined : location,
+      hourlyRate: hourlyRate === "" ? undefined : parseFloat(hourlyRate),
+      teachingMode,
+      governorate,
+      district,
+      city,
+      email,
+      phoneNumber,
     };
 
-    // Validate form data with Zod
     const result = tutorSchema.safeParse(validationData);
 
-    // Handle validation failure
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
-
       result.error.issues.forEach((error) => {
         const field = error.path[0] as string;
         fieldErrors[field] = error.message;
       });
-
       setErrors(fieldErrors);
       return;
     }
 
-    // Submit validated data to API
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("subject", subject);
-    formData.append("bio", bio);
-
-    if (price !== "") {
-      formData.append("price", price);
-    }
-
-    if (location !== "") {
-      formData.append("location", location);
-    }
+    Object.entries(validationData).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value.toString());
+      }
+    });
 
     if (profilePicture) {
       formData.append("profilePicture", profilePicture);
     }
 
     const res = await fetch("/api/submit", {
-      method: "POST", // We'll handle both create and update in POST
+      method: "POST",
       body: formData,
     });
 
-    // Handle API response
     if (res.ok) {
       alert("Profile saved successfully!");
-      if (!initialData) {
-        // Clear all form fields if it was a new creation
-        setName("");
-        setSubject("");
-        setBio("");
-        setPrice("");
-        setLocation("");
-      }
-      setProfilePicture(null);
-      setFileInputKey((prev) => prev + 1);
+      window.location.href = "/tutor/dashboard";
     } else {
-      alert("Submission failed.");
+      const errorText = await res.text();
+      alert(`Submission failed: ${errorText}`);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="card form">
-      {/* BLOCK: Name field */}
       <div className="form-field">
-        <label htmlFor="name" className="form-label">
-          Name
-        </label>
-
-        <input
-          type="text"
-          id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="form-input"
-          required
-        />
-
+        <label htmlFor="name" className="form-label">Name</label>
+        <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} className="form-input" required />
         {errors.name && <p className="form-error">{errors.name}</p>}
       </div>
 
-      {/* BLOCK: Subject field */}
       <div className="form-field">
-        <label htmlFor="subject" className="form-label">
-          Subject
-        </label>
-
-        <select
-          id="subject"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-          className="form-input"
-          required>
-          <option value="" hidden disabled>
-            Select a subject
-          </option>
-
-          {/* Dynamically generate subject options from constants */}
-          {SUBJECTS.map((subjectItem) => (
-            <option key={subjectItem} value={subjectItem}>
-              {subjectItem}
-            </option>
-          ))}
+        <label htmlFor="subject" className="form-label">Subject</label>
+        <select id="subject" value={subject} onChange={(e) => setSubject(e.target.value)} className="form-input" required>
+          <option value="" hidden disabled>Select a subject</option>
+          {SUBJECTS.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
-
         {errors.subject && <p className="form-error">{errors.subject}</p>}
       </div>
 
-      {/* BLOCK: Bio field */}
       <div className="form-field">
-        <label htmlFor="bio" className="form-label">
-          Bio
-        </label>
-
-        <textarea
-          id="bio"
-          value={bio}
-          className="form-input"
-          placeholder="Describe yourself briefly"
-          onChange={(e) => setBio(e.target.value)}
-        />
+        <label htmlFor="hourlyRate" className="form-label">Hourly Rate ($)</label>
+        <input type="number" id="hourlyRate" value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} className="form-input" placeholder="e.g. 20" required />
+        {errors.hourlyRate && <p className="form-error">{errors.hourlyRate}</p>}
       </div>
 
-      {/* BLOCK: Price field */}
       <div className="form-field">
-        <label htmlFor="price" className="form-label">
-          Price per Hour (Optional)
-        </label>
-
-        <input
-          type="number"
-          id="price"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          className="form-input"
-          placeholder="e.g. 25.00"
-          step="0.01"
-          min="0"
-        />
-
-        {errors.price && <p className="form-error">{errors.price}</p>}
+        <label htmlFor="teachingMode" className="form-label">Teaching Mode</label>
+        <select id="teachingMode" value={teachingMode} onChange={(e) => setTeachingMode(e.target.value as "IN_PERSON" | "ONLINE" | "BOTH")} className="form-input" required>
+          <option value="IN_PERSON">In Person</option>
+          <option value="ONLINE">Online</option>
+          <option value="BOTH">Both</option>
+        </select>
+        {errors.teachingMode && <p className="form-error">{errors.teachingMode}</p>}
       </div>
 
-      {/* BLOCK: Location field */}
       <div className="form-field">
-        <label htmlFor="location" className="form-label">
-          Location (Optional)
-        </label>
-
-        <input
-          type="text"
-          id="location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="form-input"
-          placeholder="e.g. Beirut, Lebanon"
-        />
-
-        {errors.location && <p className="form-error">{errors.location}</p>}
+        <label htmlFor="governorate" className="form-label">Governorate</label>
+        <select id="governorate" value={governorate} onChange={(e) => setGovernorate(e.target.value)} className="form-input" required>
+          <option value="" disabled>Select Governorate</option>
+          {Object.keys(LEBANON_LOCATIONS).map((gov) => <option key={gov} value={gov}>{gov}</option>)}
+        </select>
+        {errors.governorate && <p className="form-error">{errors.governorate}</p>}
       </div>
 
-      {/* BLOCK: Profile picture field */}
       <div className="form-field">
-        <label htmlFor="profilePicture" className="form-label">
-          Profile Picture (Optional)
-        </label>
-        
-        {initialData?.profilePictureUrl && (
-          <p className="file-feedback">You already have a profile picture. Uploading a new one will replace it.</p>
-        )}
-
-        <input
-          key={fileInputKey}
-          type="file"
-          id="profilePicture"
-          accept="image/*"
-          className="form-input"
-          onChange={(e) => {
-            const file = e.target.files?.[0] || null;
-            setProfilePicture(file);
-          }}
-        />
-
-        {/* Display selected file name */}
-        {profilePicture && (
-          <p className="file-feedback">Selected: {profilePicture.name}</p>
-        )}
+        <label htmlFor="district" className="form-label">District</label>
+        <select id="district" value={district} onChange={(e) => setDistrict(e.target.value)} className="form-input" required disabled={!governorate}>
+          <option value="" disabled>Select District</option>
+          {governorate && LEBANON_LOCATIONS[governorate as Governorate].map((dist) => (
+            <option key={dist} value={dist}>{dist}</option>
+          ))}
+        </select>
+        {errors.district && <p className="form-error">{errors.district}</p>}
       </div>
 
-      {/* BLOCK: Submit button */}
+      <div className="form-field">
+        <label htmlFor="city" className="form-label">City/Village</label>
+        <input type="text" id="city" value={city} onChange={(e) => setCity(e.target.value)} className="form-input" placeholder="e.g. Hamra" required />
+        {errors.city && <p className="form-error">{errors.city}</p>}
+      </div>
+
+      <div className="form-field">
+        <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
+        <input type="tel" id="phoneNumber" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="form-input" placeholder="e.g. 70123456" />
+        {errors.phoneNumber && <p className="form-error">{errors.phoneNumber}</p>}
+      </div>
+
+      <div className="form-field">
+        <label htmlFor="email" className="form-label">Contact Email (Optional)</label>
+        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-input" placeholder="e.g. contact@example.com" />
+        {errors.email && <p className="form-error">{errors.email}</p>}
+      </div>
+
+      <div className="form-field">
+        <label htmlFor="bio" className="form-label">Bio</label>
+        <textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} className="form-input" placeholder="Tell us about your experience..." />
+      </div>
+
+      <div className="form-field">
+        <label htmlFor="profilePicture" className="form-label">Profile Picture</label>
+        <input type="file" id="profilePicture" accept="image/*" className="form-input" onChange={(e) => setProfilePicture(e.target.files?.[0] || null)} />
+      </div>
+
       <button type="submit" className="form-button">
         {initialData ? "Update Profile" : "Create Profile"}
       </button>

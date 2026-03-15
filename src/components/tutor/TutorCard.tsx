@@ -38,13 +38,11 @@ export default function TutorCard({ tutor }: TutorCardProps) {
           <p className="tutor-name">{tutor.name}</p>
           <p className="tutor-subject">{tutor.subject}</p>
 
-          {/* Display price if available */}
-          {tutor.price && <p className="tutor-meta">{formatPrice(tutor.price)}</p>}
+          <p className="tutor-meta">{formatPrice(tutor.hourlyRate)}</p>
 
-          {/* Display location if available */}
-          {tutor.location && (
-            <p className="tutor-meta">{formatLocation(tutor.location)}</p>
-          )}
+          <p className="tutor-meta">
+            {formatLocation(tutor.governorate, tutor.district, tutor.city)}
+          </p>
         </div>
       </Link>
     </li>

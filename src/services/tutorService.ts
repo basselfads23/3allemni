@@ -53,20 +53,24 @@ export async function getTutorByUserId(userId: string): Promise<Tutor | null> {
 
 // BLOCK: Create new tutor
 // Creates a new tutor record in the database
-// Note: userId must be provided (from authenticated user)
 export async function createTutor(
   data: TutorFormData & { userId: string; profilePictureUrl?: string },
 ): Promise<Tutor> {
   try {
     const tutor = await prisma.tutor.create({
       data: {
-        userId: data.userId, // Link to authenticated user
+        userId: data.userId,
         name: data.name,
         subject: data.subject,
-        bio: data.bio,
-        price: data.price,
-        location: data.location,
-        profilePictureUrl: data.profilePictureUrl,
+        hourlyRate: data.hourlyRate,
+        teachingMode: data.teachingMode,
+        governorate: data.governorate,
+        district: data.district,
+        city: data.city,
+        email: data.email || null,
+        phoneNumber: data.phoneNumber || null,
+        bio: data.bio || null,
+        profilePictureUrl: data.profilePictureUrl || null,
       },
     });
 
@@ -90,11 +94,16 @@ export async function updateTutor(
       data: {
         ...(data.name && { name: data.name }),
         ...(data.subject && { subject: data.subject }),
-        ...(data.bio !== undefined && { bio: data.bio }),
-        ...(data.price !== undefined && { price: data.price }),
-        ...(data.location !== undefined && { location: data.location }),
+        ...(data.hourlyRate !== undefined && { hourlyRate: data.hourlyRate }),
+        ...(data.teachingMode !== undefined && { teachingMode: data.teachingMode }),
+        ...(data.governorate !== undefined && { governorate: data.governorate }),
+        ...(data.district !== undefined && { district: data.district }),
+        ...(data.city !== undefined && { city: data.city }),
+        ...(data.email !== undefined && { email: data.email || null }),
+        ...(data.phoneNumber !== undefined && { phoneNumber: data.phoneNumber || null }),
+        ...(data.bio !== undefined && { bio: data.bio || null }),
         ...(data.profilePictureUrl !== undefined && {
-          profilePictureUrl: data.profilePictureUrl,
+          profilePictureUrl: data.profilePictureUrl || null,
         }),
       },
     });
@@ -123,7 +132,7 @@ export async function deleteTutor(id: string): Promise<void> {
 }
 
 // BLOCK: Search tutors
-// Search tutors by name, subject, or bio
+// Search tutors by name, subject, bio, or location
 export async function searchTutors(query: string): Promise<Tutor[]> {
   try {
     const tutors = await prisma.tutor.findMany({
@@ -132,6 +141,9 @@ export async function searchTutors(query: string): Promise<Tutor[]> {
           { name: { contains: query, mode: "insensitive" } },
           { subject: { contains: query, mode: "insensitive" } },
           { bio: { contains: query, mode: "insensitive" } },
+          { city: { contains: query, mode: "insensitive" } },
+          { district: { contains: query, mode: "insensitive" } },
+          { governorate: { contains: query, mode: "insensitive" } },
         ],
       },
       orderBy: {

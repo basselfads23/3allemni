@@ -1,70 +1,67 @@
 // src/components/tutor/TutorFilters.tsx
-// BLOCK: Tutor Filters Component
-// Provides dropdowns for filtering tutors by subject and location
+"use client";
 
 import { SUBJECTS } from "@/lib/constants";
+import { LEBANON_LOCATIONS, Governorate } from "@/lib/lebanon-locations";
 
-// BLOCK: Component props type definition
 interface TutorFiltersProps {
   selectedSubject: string;
-  selectedLocation: string;
-  uniqueLocations: string[];
+  selectedGovernorate: string;
+  selectedDistrict: string;
+  selectedTeachingMode: string;
   onSubjectChange: (subject: string) => void;
-  onLocationChange: (location: string) => void;
+  onGovernorateChange: (gov: string) => void;
+  onDistrictChange: (dist: string) => void;
+  onTeachingModeChange: (mode: string) => void;
 }
 
-// BLOCK: TutorFilters component
-// Renders subject and location filter dropdowns
 export default function TutorFilters({
   selectedSubject,
-  selectedLocation,
-  uniqueLocations,
+  selectedGovernorate,
+  selectedDistrict,
+  selectedTeachingMode,
   onSubjectChange,
-  onLocationChange,
+  onGovernorateChange,
+  onDistrictChange,
+  onTeachingModeChange,
 }: TutorFiltersProps) {
   return (
     <div className="filter-container">
-      {/* BLOCK: Subject filter dropdown */}
       <div className="filter-group">
-        <label htmlFor="subject-filter" className="filter-label">
-          Filter by Subject:
-        </label>
-
-        <select
-          id="subject-filter"
-          value={selectedSubject}
-          onChange={(e) => onSubjectChange(e.target.value)}
-          className="filter-select">
+        <label htmlFor="subject-filter" className="filter-label">Subject:</label>
+        <select id="subject-filter" value={selectedSubject} onChange={(e) => onSubjectChange(e.target.value)} className="filter-select">
           <option value="All Subjects">All Subjects</option>
-
-          {/* Dynamically generate subject options from constants */}
-          {SUBJECTS.map((subject) => (
-            <option key={subject} value={subject}>
-              {subject}
-            </option>
-          ))}
+          {SUBJECTS.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
 
-      {/* BLOCK: Location filter dropdown */}
       <div className="filter-group">
-        <label htmlFor="location-filter" className="filter-label">
-          Filter by Location:
-        </label>
+        <label htmlFor="mode-filter" className="filter-label">Mode:</label>
+        <select id="mode-filter" value={selectedTeachingMode} onChange={(e) => onTeachingModeChange(e.target.value)} className="filter-select">
+          <option value="All Modes">All Modes</option>
+          <option value="IN_PERSON">In Person</option>
+          <option value="ONLINE">Online</option>
+          <option value="BOTH">Both</option>
+        </select>
+      </div>
 
-        <select
-          id="location-filter"
-          value={selectedLocation}
-          onChange={(e) => onLocationChange(e.target.value)}
-          className="filter-select">
-          <option value="All Locations">All Locations</option>
+      <div className="filter-group">
+        <label htmlFor="gov-filter" className="filter-label">Governorate:</label>
+        <select id="gov-filter" value={selectedGovernorate} onChange={(e) => onGovernorateChange(e.target.value)} className="filter-select">
+          <option value="All Governorates">All Governorates</option>
+          {Object.keys(LEBANON_LOCATIONS).map((gov) => <option key={gov} value={gov}>{gov}</option>)}
+        </select>
+      </div>
 
-          {/* Dynamically generate options from unique locations */}
-          {uniqueLocations.map((location) => (
-            <option key={location} value={location}>
-              {location}
-            </option>
-          ))}
+      <div className="filter-group">
+        <label htmlFor="dist-filter" className="filter-label">District:</label>
+        <select id="dist-filter" value={selectedDistrict} onChange={(e) => onDistrictChange(e.target.value)} className="filter-select" disabled={selectedGovernorate === "All Governorates"}>
+          <option value="All Districts">All Districts</option>
+          {selectedGovernorate !== "All Governorates" && 
+            LEBANON_LOCATIONS[selectedGovernorate as Governorate].map((dist) => (
+              <option key={dist} value={dist}>{dist}</option>
+            ))
+          }
         </select>
       </div>
     </div>

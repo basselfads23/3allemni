@@ -16,6 +16,12 @@ enum Role {
   ADMIN
 }
 
+enum TeachingMode {
+  IN_PERSON
+  ONLINE
+  BOTH
+}
+
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
@@ -79,12 +85,25 @@ model Tutor {
   userId            String      @unique
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // Mandatory fields
   name              String
   subject           String
+  hourlyRate        Float       // Changed from price
+  teachingMode      TeachingMode
+  governorate       String      // Added
+  district          String      // Added
+  city              String      // Added
+  
+  // Optional fields
+  email             String?     // Added as optional override
+  phoneNumber       String?     // Added
   bio               String?
   profilePictureUrl String?
-  price             Float?
-  location          String?
+
+  // Verification fields
+  isVerified        Boolean     @default(false)
+  verifiedDegree    String?
+
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 

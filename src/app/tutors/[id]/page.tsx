@@ -109,19 +109,39 @@ export default function TutorProfile() {
           <div className="profile-subject-badge">{tutor.subject}</div>
 
           <div className="profile-details">
-            {tutor.price && (
+            <div className="profile-detail-item">
+              <span className="profile-detail-label">Rate:</span>
+              <p className="profile-detail-value">
+                ${tutor.hourlyRate.toFixed(2)}/hour
+              </p>
+            </div>
+
+            <div className="profile-detail-item">
+              <span className="profile-detail-label">Teaching Mode:</span>
+              <p className="profile-detail-value">
+                {tutor.teachingMode === "IN_PERSON" ? "In Person" : 
+                 tutor.teachingMode === "ONLINE" ? "Online" : "In Person & Online"}
+              </p>
+            </div>
+
+            <div className="profile-detail-item">
+              <span className="profile-detail-label">Location:</span>
+              <p className="profile-detail-value">
+                {[tutor.city, tutor.district, tutor.governorate].filter(Boolean).join(", ")}
+              </p>
+            </div>
+
+            {tutor.phoneNumber && (
               <div className="profile-detail-item">
-                <span className="profile-detail-label">Price:</span>
-                <p className="profile-detail-value">
-                  ${tutor.price.toFixed(2)}/hour
-                </p>
+                <span className="profile-detail-label">Phone:</span>
+                <p className="profile-detail-value">{tutor.phoneNumber}</p>
               </div>
             )}
 
-            {tutor.location && (
+            {tutor.email && (
               <div className="profile-detail-item">
-                <span className="profile-detail-label">Location:</span>
-                <p className="profile-detail-value">{tutor.location}</p>
+                <span className="profile-detail-label">Email:</span>
+                <p className="profile-detail-value">{tutor.email}</p>
               </div>
             )}
 
