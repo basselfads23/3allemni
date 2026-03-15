@@ -14,33 +14,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   trustHost: true,
   secret: process.env.AUTH_SECRET,
-  debug: true, // Force debug mode for more Vercel logs
-
-  events: {
-    async signIn(message) {
-      console.log("[Auth] Event: signIn successful for user:", message.user.email);
-    },
-    async createUser(message) {
-      console.log("[Auth] Event: createUser successful:", message.user.email);
-    },
-    async linkAccount(message) {
-      console.log("[Auth] Event: linkAccount successful:", message.account.provider);
-    },
-  },
-
-  // Log all database calls during authentication
-  // Corrected signature for NextAuth v5 logger
-  logger: {
-    error(error: Error) {
-      console.error("[Auth] CRITICAL ERROR:", error.name, error.message);
-    },
-    warn(code: string) {
-      console.warn("[Auth] WARNING:", code);
-    },
-    debug(code: string, metadata?: unknown) {
-      console.log("[Auth] DEBUG:", { code, metadata });
-    },
-  },
+  debug: false,
 
   // BLOCK: Authentication providers
   // Configure OAuth providers (currently only Google)
@@ -76,11 +50,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         },
       };
     },
-  },
-
-  // BLOCK: Pages configuration
-  // Customize auth pages (optional, uses NextAuth defaults)
-  pages: {
-    signIn: "/auth/signin", // Custom sign-in page (optional)
   },
 });
