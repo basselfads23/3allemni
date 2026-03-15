@@ -3,7 +3,10 @@ import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-console.log("[Prisma] Initializing client... URL defined:", !!process.env.DATABASE_URL);
+// Safely log database host to verify the target in Vercel
+const dbUrl = process.env.DATABASE_URL || "";
+const dbHost = dbUrl.split("@")[1]?.split("/")[0] || "unknown";
+console.log(`[Prisma] Initializing client... Target Host: ${dbHost}`);
 
 export const prisma =
   globalForPrisma.prisma ||
@@ -13,7 +16,6 @@ export const prisma =
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-// Self-invoking check for production connectivity
 if (process.env.NODE_ENV === "production") {
   prisma.$connect()
     .then(() => console.log("[Prisma] Database connection successful"))
