@@ -22,7 +22,7 @@ export default async function Header() {
               Find a Tutor
             </Link>
             {session && (
-              <Link href="/tutor" className="header-link font-semibold">
+              <Link href="/tutor/dashboard" className="header-link font-semibold">
                 Dashboard
               </Link>
             )}
@@ -46,7 +46,7 @@ export default async function Header() {
             <form
               action={async () => {
                 "use server";
-                await signIn("google", { redirectTo: "/tutor" });
+                await signIn("google", { redirectTo: "/tutor/dashboard" });
               }}
             >
               <button type="submit" className="header-link text-blue-600 font-semibold">

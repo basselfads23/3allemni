@@ -13,7 +13,7 @@ export default function HomeClient() {
 
   const handleNext = () => {
     if (userType === "Tutor") {
-      router.push("/tutor");
+      router.push("/tutor/dashboard");
     } else {
       router.push("/parent");
     }
