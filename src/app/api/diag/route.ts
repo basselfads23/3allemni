@@ -21,12 +21,14 @@ export async function GET() {
     let prismaError: { message: string; code?: string; meta?: unknown } | null = null;
     try {
       await prisma.tutor.findMany({ take: 1 });
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e instanceof Error || (e && typeof e === "object" && "message" in e)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const err = e as any;
         prismaError = {
-          message: e.message,
-          code: e.code,
-          meta: e.meta,
+          message: err.message,
+          code: err.code,
+          meta: err.meta,
         };
       } else {
         prismaError = { message: "Unknown Prisma error" };
