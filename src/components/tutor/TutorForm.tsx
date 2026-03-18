@@ -24,6 +24,7 @@ export default function TutorForm({ initialData }: TutorFormProps) {
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Reset district when governorate changes
   useEffect(() => {
@@ -31,6 +32,35 @@ export default function TutorForm({ initialData }: TutorFormProps) {
       setDistrict("");
     }
   }, [governorate, initialData?.governorate]);
+
+  const handleDelete = async () => {
+    if (!initialData?.id) return;
+    
+    const confirmed = window.confirm(
+      "Are you sure you want to delete your tutor profile? This action cannot be undone."
+    );
+    
+    if (!confirmed) return;
+
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/tutor/${initialData.id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        alert("Profile deleted successfully.");
+        window.location.href = "/tutor/dashboard";
+      } else {
+        const errorText = await res.text();
+        alert(`Deletion failed: ${errorText}`);
+      }
+    } catch (err) {
+      alert("An error occurred while deleting your profile.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,9 +197,22 @@ export default function TutorForm({ initialData }: TutorFormProps) {
         <input type="file" id="profilePicture" accept="image/*" className="form-input" onChange={(e) => setProfilePicture(e.target.files?.[0] || null)} />
       </div>
 
-      <button type="submit" className="form-button">
-        {initialData ? "Update Profile" : "Create Profile"}
-      </button>
+      <div className="button-group flex gap-3 mt-6">
+        <button type="submit" className="form-button flex-1">
+          {initialData ? "Update Profile" : "Create Profile"}
+        </button>
+        
+        {initialData && (
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className="form-button-secondary bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors disabled:opacity-50"
+          >
+            {isDeleting ? "Deleting..." : "Delete Profile"}
+          </button>
+        )}
+      </div>
     </form>
   );
 }
