@@ -22,17 +22,12 @@ export async function GET() {
     try {
       await prisma.tutor.findMany({ take: 1 });
     } catch (e: unknown) {
-      if (e instanceof Error || (e && typeof e === "object" && "message" in e)) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const err = e as any;
-        prismaError = {
-          message: err.message,
-          code: err.code,
-          meta: err.meta,
-        };
-      } else {
-        prismaError = { message: "Unknown Prisma error" };
-      }
+      const err = e as Record<string, unknown>;
+      prismaError = {
+        message: String(err.message || "Unknown error"),
+        code: typeof err.code === "string" ? err.code : undefined,
+        meta: err.meta,
+      };
     }
 
     return NextResponse.json({

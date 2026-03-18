@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     const subject = formData.get("subject") as string;
     const bio = formData.get("bio") as string;
     const hourlyRateStr = formData.get("hourlyRate") as string | null;
-    const teachingMode = formData.get("teachingMode") as any;
+    const teachingModeStr = formData.get("teachingMode") as string;
     const governorate = formData.get("governorate") as string;
     const district = formData.get("district") as string;
     const city = formData.get("city") as string;
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
       subject,
       bio,
       hourlyRate,
-      teachingMode,
+      teachingMode: teachingModeStr,
       governorate,
       district,
       city,
