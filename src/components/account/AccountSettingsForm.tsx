@@ -123,7 +123,7 @@ export default function AccountSettingsForm({ user }: AccountSettingsFormProps) 
         <select 
           id="role" 
           value={role} 
-          onChange={(e) => setRole(e.target.value)} 
+          onChange={(e) => setRole(e.target.value as "PARENT" | "TUTOR" | "ADMIN")} 
           className="form-input"
           required
         >
