@@ -24,6 +24,7 @@ export default async function AccountSettingsPage() {
       name: true,
       email: true,
       phoneNumber: true,
+      role: true,
     },
   });
 

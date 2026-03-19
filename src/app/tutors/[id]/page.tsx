@@ -1,6 +1,7 @@
 // src/app/tutors/[id]/page.tsx
 import { auth } from "@/lib/auth";
 import { getTutorById } from "@/services/tutorService";
+import { prisma } from "@/lib/prisma"; // Added
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -21,7 +22,20 @@ export default async function TutorProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  // 2. Determine user's contact capability
+  // 2. Check for existing outreach if logged in
+  let existingConversation = null;
+  if (session?.user?.id) {
+    existingConversation = await prisma.conversation.findUnique({
+      where: {
+        parentId_tutorId: {
+          parentId: session.user.id,
+          tutorId: tutor.id,
+        },
+      },
+    });
+  }
+
+  // 3. Determine user's contact capability
   // Note: We might want to prevent tutors from contacting themselves
   const isOwnProfile = session?.user?.id === tutor.userId;
 
@@ -102,6 +116,17 @@ export default async function TutorProfilePage({ params }: PageProps) {
                 <p className="text-gray-600 italic">This is your public profile view.</p>
                 <Link href="/tutor/profile" className="mt-4 inline-block text-blue-600 font-semibold underline">
                   Edit your profile
+                </Link>
+              </div>
+            ) : existingConversation ? (
+              <div className="card p-6 text-center bg-blue-50 border border-blue-100 shadow-sm">
+                <h3 className="font-bold text-lg mb-2 text-blue-900">Conversation Active</h3>
+                <p className="text-blue-800 mb-6 text-sm">You have already contacted {tutor.name}. Click below to view your chat.</p>
+                <Link 
+                  href={`/messages/${existingConversation.id}`} 
+                  className="form-button block text-center no-underline bg-blue-600 hover:bg-blue-700"
+                >
+                  View Conversation
                 </Link>
               </div>
             ) : (

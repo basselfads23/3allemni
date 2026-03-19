@@ -18,14 +18,26 @@ export default async function Header() {
           </Link>
 
           <nav className="header-nav">
-            <Link href="/parent" className="header-link">
-              Find a Tutor
-            </Link>
-            {session && (
+            {/* Common links for all logged-in users */}
+            {session?.user?.role === "PARENT" && (
+              <Link href="/parent" className="header-link">
+                Find a Tutor
+              </Link>
+            )}
+
+            {session?.user?.role === "TUTOR" && (
               <>
                 <Link href="/tutor/dashboard" className="header-link font-semibold">
                   Dashboard
                 </Link>
+                <Link href="/tutor/profile" className="header-link">
+                  My Profile
+                </Link>
+              </>
+            )}
+
+            {session && (
+              <>
                 <Link href="/messages" className="header-link">
                   Messages
                 </Link>

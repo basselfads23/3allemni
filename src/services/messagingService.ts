@@ -48,7 +48,7 @@ export async function createConversation(
 
 // BLOCK: Get conversations for a user
 // Fetches list of conversations based on user role
-export async function getConversationsForUser(userId: string, role: "PARENT" | "TUTOR") {
+export async function getConversationsForUser(userId: string, role: "PARENT" | "TUTOR" | "ADMIN") {
   try {
     serviceLogger.info(`Fetching conversations for user: ${userId} with role: ${role}`);
 

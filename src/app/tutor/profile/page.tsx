@@ -16,6 +16,11 @@ export default async function TutorProfilePage() {
     redirect("/api/auth/signin");
   }
 
+  // Strict role protection
+  if (session.user.role === "PARENT") {
+    redirect("/parent");
+  }
+
   // Fetch existing tutor profile if one exists
   const existingTutor = await getTutorByUserId(String(session.user.id));
 

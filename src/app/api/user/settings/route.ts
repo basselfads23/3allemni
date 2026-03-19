@@ -37,15 +37,16 @@ export async function PATCH(req: NextRequest) {
       }, { status: 400 });
     }
 
-    const { name, phoneNumber } = validation.data;
+    const { name, phoneNumber, role } = validation.data;
 
     // 3. Update User in database
-    apiLogger.info(`Updating user settings for ID: ${userId}`);
+    apiLogger.info(`Updating user settings for ID: ${userId}, Role: ${role}`);
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
         name,
         phoneNumber: phoneNumber || null,
+        role,
       },
       select: {
         id: true,

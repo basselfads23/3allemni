@@ -44,7 +44,13 @@ export default async function MessagesPage() {
         ) : (
           <div className="space-y-4">
             {conversations.map((conv) => {
+              // Partner identification logic
               const partner = role === "PARENT" ? conv.tutor.user : conv.parent;
+              
+              if (!partner) {
+                return null; // Safety check
+              }
+
               const latestMessage = conv.messages[0];
               const isPending = conv.status === "PENDING";
               const isAccepted = conv.status === "ACCEPTED";

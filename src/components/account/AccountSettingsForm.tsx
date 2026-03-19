@@ -10,6 +10,7 @@ type UserData = {
   name: string | null;
   email: string;
   phoneNumber: string | null;
+  role: "PARENT" | "TUTOR" | "ADMIN";
 };
 
 type AccountSettingsFormProps = {
@@ -19,6 +20,7 @@ type AccountSettingsFormProps = {
 export default function AccountSettingsForm({ user }: AccountSettingsFormProps) {
   const [name, setName] = useState(user.name || "");
   const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || "");
+  const [role, setRole] = useState(user.role || "TUTOR");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -32,6 +34,7 @@ export default function AccountSettingsForm({ user }: AccountSettingsFormProps) 
     const validationData = {
       name,
       phoneNumber,
+      role,
     };
 
     const result = userSettingsSchema.safeParse(validationData);
@@ -113,6 +116,23 @@ export default function AccountSettingsForm({ user }: AccountSettingsFormProps) 
         />
         {errors.phoneNumber && <p className="form-error">{errors.phoneNumber}</p>}
         <p className="text-xs text-gray-500 mt-1">This is your general contact number used for account communication.</p>
+      </div>
+
+      <div className="form-field">
+        <label htmlFor="role" className="form-label">Account Type</label>
+        <select 
+          id="role" 
+          value={role} 
+          onChange={(e) => setRole(e.target.value)} 
+          className="form-input"
+          required
+        >
+          <option value="PARENT">Parent (Looking for Tutors)</option>
+          <option value="TUTOR">Tutor (Offering Lessons)</option>
+        </select>
+        <div className="mt-2 p-2 bg-blue-50 border border-blue-100 rounded text-xs text-blue-700 italic">
+          Note: Changing your account type requires you to Sign Out and Sign In again for all features to update correctly.
+        </div>
       </div>
 
       {message && (
