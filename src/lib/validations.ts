@@ -18,6 +18,13 @@ export const tutorSchema = z.object({
   bio: z.string().optional(),
 });
 
+export const userSettingsSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(100),
+  phoneNumber: z.string().min(8, "Phone number must be at least 8 digits").optional().or(z.literal("")),
+});
+
+export type UserSettingsFormData = z.infer<typeof userSettingsSchema>;
+
 export type TutorFormData = z.infer<typeof tutorSchema>;
 
 export type Tutor = {
