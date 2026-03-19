@@ -22,6 +22,12 @@ enum TeachingMode {
   BOTH
 }
 
+enum ConversationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
@@ -34,9 +40,11 @@ model User {
   createdAt     DateTime  @default(now()) 
   updatedAt     DateTime  @updatedAt  
 
-  tutor     Tutor?
-  accounts  Account[]
-  sessions  Session[]
+  tutor               Tutor?
+  accounts            Account[]
+  sessions            Session[]
+  parentConversations Conversation[] @relation("ParentConversations")
+  sentMessages        Message[]
 
   @@map("users")
 }
@@ -105,8 +113,38 @@ model Tutor {
   isVerified        Boolean     @default(false)
   verifiedDegree    String?
 
+  conversations     Conversation[] @relation("TutorConversations")
+
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
   @@map("tutors")
+}
+
+model Conversation {
+  id        String             @id @default(cuid())
+  parentId  String
+  parent    User               @relation("ParentConversations", fields: [parentId], references: [id], onDelete: Cascade)
+  tutorId   String
+  tutor     Tutor              @relation("TutorConversations", fields: [tutorId], references: [id], onDelete: Cascade)
+  status    ConversationStatus @default(PENDING)
+  messages  Message[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@unique([parentId, tutorId])
+  @@map("conversations")
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id])
+  content        String       @db.Text
+  isRead         Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  @@map("messages")
 }

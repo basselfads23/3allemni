@@ -131,20 +131,6 @@ export default function TutorProfile() {
               </p>
             </div>
 
-            {tutor.phoneNumber && (
-              <div className="profile-detail-item">
-                <span className="profile-detail-label">Phone:</span>
-                <p className="profile-detail-value">{tutor.phoneNumber}</p>
-              </div>
-            )}
-
-            {tutor.email && (
-              <div className="profile-detail-item">
-                <span className="profile-detail-label">Email:</span>
-                <p className="profile-detail-value">{tutor.email}</p>
-              </div>
-            )}
-
             {tutor.bio && (
               <div className="profile-detail-item">
                 <span className="profile-detail-label">About:</span>

@@ -22,9 +22,14 @@ export default async function Header() {
               Find a Tutor
             </Link>
             {session && (
-              <Link href="/tutor/dashboard" className="header-link font-semibold">
-                Dashboard
-              </Link>
+              <>
+                <Link href="/tutor/dashboard" className="header-link font-semibold">
+                  Dashboard
+                </Link>
+                <Link href="/account/settings" className="header-link">
+                  Settings
+                </Link>
+              </>
             )}
           </nav>
         </div>
