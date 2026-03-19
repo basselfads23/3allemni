@@ -26,6 +26,9 @@ export default async function Header() {
                 <Link href="/tutor/dashboard" className="header-link font-semibold">
                   Dashboard
                 </Link>
+                <Link href="/messages" className="header-link">
+                  Messages
+                </Link>
                 <Link href="/account/settings" className="header-link">
                   Settings
                 </Link>
