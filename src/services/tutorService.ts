@@ -41,13 +41,21 @@ export async function getTutorById(id: string): Promise<Tutor | null> {
 // Fetches a single tutor by their associated user ID
 export async function getTutorByUserId(userId: string): Promise<Tutor | null> {
   try {
+    serviceLogger.info(`Fetching tutor for user ID: ${userId}`);
     const tutor = await prisma.tutor.findUnique({
       where: { userId },
     });
-    return tutor as Tutor | null;
+    
+    if (!tutor) {
+      serviceLogger.info(`No tutor profile found for user ID: ${userId}`);
+      return null;
+    }
+    
+    return tutor as Tutor;
   } catch (error) {
-    serviceLogger.error(`Error fetching tutor for user ID ${userId}:`, error);
-    throw new Error("Failed to fetch tutor by user ID");
+    serviceLogger.error(`Database error fetching tutor for user ID ${userId}:`, error);
+    // Only throw if it's a real database error, not just "not found"
+    throw new Error(`Database error fetching tutor: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
 }
 
