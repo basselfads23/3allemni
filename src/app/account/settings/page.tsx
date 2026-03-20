@@ -19,12 +19,12 @@ export default async function AccountSettingsPage() {
   // 2. Fetch full user data from database
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    include: {
-      tutor: {
-        include: {
-          educations: true,
-        }
-      }
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phoneNumber: true,
+      role: true,
     }
   });
 
