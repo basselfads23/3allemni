@@ -104,7 +104,6 @@ model Tutor {
   city              String      // Added
   
   // Optional fields
-  email             String?     // Added as optional override
   phoneNumber       String?     // Added
   bio               String?
   profilePictureUrl String?
@@ -114,11 +113,27 @@ model Tutor {
   verifiedDegree    String?
 
   conversations     Conversation[] @relation("TutorConversations")
+  educations        Education[]
 
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
   @@map("tutors")
+}
+
+model Education {
+  id          String   @id @default(cuid())
+  tutorId     String
+  tutor       Tutor    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  degree      String
+  major       String
+  university  String
+  documentUrl String?
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("educations")
 }
 
 model Conversation {

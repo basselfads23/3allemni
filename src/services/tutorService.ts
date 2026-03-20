@@ -75,7 +75,6 @@ export async function createTutor(
         governorate: data.governorate,
         district: data.district,
         city: data.city,
-        email: data.email || null,
         phoneNumber: data.phoneNumber || null,
         bio: data.bio || null,
         profilePictureUrl: data.profilePictureUrl || null,
@@ -107,7 +106,6 @@ export async function updateTutor(
         ...(data.governorate !== undefined && { governorate: data.governorate }),
         ...(data.district !== undefined && { district: data.district }),
         ...(data.city !== undefined && { city: data.city }),
-        ...(data.email !== undefined && { email: data.email || null }),
         ...(data.phoneNumber !== undefined && { phoneNumber: data.phoneNumber || null }),
         ...(data.bio !== undefined && { bio: data.bio || null }),
         ...(data.profilePictureUrl !== undefined && {

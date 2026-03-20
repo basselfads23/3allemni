@@ -13,7 +13,6 @@ export const tutorSchema = z.object({
   city: z.string().min(1, "City is required"),
   
   // Optional fields
-  email: z.string().email("Invalid email address").optional().or(z.literal("")),
   phoneNumber: z.string().min(8, "Phone number must be at least 8 digits").optional().or(z.literal("")),
   bio: z.string().optional(),
 });
@@ -28,6 +27,18 @@ export type UserSettingsFormData = z.infer<typeof userSettingsSchema>;
 
 export type TutorFormData = z.infer<typeof tutorSchema>;
 
+export type Education = {
+  id: string;
+  tutorId: string;
+  degree: string;
+  major: string;
+  university: string;
+  documentUrl: string | null;
+  isVerified: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export type Tutor = {
   id: string;
   userId: string;
@@ -38,12 +49,12 @@ export type Tutor = {
   governorate: string;
   district: string;
   city: string;
-  email: string | null;
   phoneNumber: string | null;
   bio: string | null;
   profilePictureUrl: string | null;
   isVerified: boolean;
   verifiedDegree: string | null;
+  educations?: Education[];
   createdAt: Date;
   updatedAt: Date;
 };
