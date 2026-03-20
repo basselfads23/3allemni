@@ -47,6 +47,33 @@ export async function uploadProfilePicture(file: File): Promise<string> {
   }
 }
 
+// BLOCK: Upload document
+// Uploads a document (PDF or Image) to Vercel Blob and returns the URL
+export async function uploadDocument(file: File): Promise<string> {
+  try {
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error("Invalid file type. Please upload a PDF or an Image.");
+    }
+
+    const maxSizeMB = 5;
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      throw new Error(`File size exceeds ${maxSizeMB}MB limit`);
+    }
+
+    const timestamp = Date.now();
+    const extension = file.name.split(".").pop();
+    const uniqueFilename = `doc-${timestamp}-${Math.random().toString(36).substring(7)}.${extension}`;
+
+    const blob = await put(uniqueFilename, file, { access: "public" });
+    return blob.url;
+  } catch (error) {
+    serviceLogger.error("Error uploading document:", error);
+    throw error;
+  }
+}
+
 // BLOCK: Delete file from Vercel Blob
 // Deletes a file from Vercel Blob storage (for future use)
 export async function deleteFile(url: string): Promise<void> {

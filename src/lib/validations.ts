@@ -23,7 +23,15 @@ export const userSettingsSchema = z.object({
   role: z.enum(["PARENT", "TUTOR"]),
 });
 
+export const educationSchema = z.object({
+  degree: z.string().min(2, "Degree is required"),
+  major: z.string().min(2, "Major is required"),
+  university: z.string().min(2, "University is required"),
+});
+
 export type UserSettingsFormData = z.infer<typeof userSettingsSchema>;
+
+export type EducationFormData = z.infer<typeof educationSchema>;
 
 export type TutorFormData = z.infer<typeof tutorSchema>;
 

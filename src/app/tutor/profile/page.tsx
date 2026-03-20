@@ -4,9 +4,15 @@
 
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { getTutorByUserId } from "@/services/tutorService";
+import { prisma } from "@/lib/prisma";
 import TutorForm from "@/components/tutor/TutorForm";
+import EducationSection from "@/components/tutor/EducationSection";
 import Link from "next/link";
+import { Tutor, Education } from "@/lib/validations";
+
+type TutorWithEducations = Tutor & {
+  educations: Education[];
+};
 
 export default async function TutorProfilePage() {
   const session = await auth();
@@ -20,8 +26,15 @@ export default async function TutorProfilePage() {
     redirect("/parent");
   }
 
-  // Fetch existing tutor profile if one exists
-  const existingTutor = await getTutorByUserId(session.user.id);
+  // 1. Fetch tutor profile with educations
+  const existingTutor = await prisma.tutor.findUnique({
+    where: { userId: session.user.id },
+    include: {
+      educations: {
+        orderBy: { createdAt: "desc" }
+      }
+    }
+  }) as TutorWithEducations | null;
 
   return (
     <main className="page-container">
@@ -42,6 +55,13 @@ export default async function TutorProfilePage() {
         </p>
         
         <TutorForm initialData={existingTutor} />
+
+        {existingTutor && (
+          <>
+            <hr className="my-12 border-gray-200" />
+            <EducationSection educations={existingTutor.educations} />
+          </>
+        )}
       </div>
     </main>
   );

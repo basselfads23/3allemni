@@ -159,7 +159,13 @@ export default function TutorForm({ initialData }: TutorFormProps) {
 
       <div className="form-field">
         <label htmlFor="teachingMode" className="form-label">Teaching Mode</label>
-        <select id="teachingMode" value={teachingMode} onChange={(e) => setTeachingMode(e.target.value as any)} className="form-input" required>
+        <select 
+          id="teachingMode" 
+          value={teachingMode} 
+          onChange={(e) => setTeachingMode(e.target.value as "IN_PERSON" | "ONLINE" | "BOTH")} 
+          className="form-input" 
+          required
+        >
           <option value="IN_PERSON">In Person</option>
           <option value="ONLINE">Online</option>
           <option value="BOTH">Both</option>
