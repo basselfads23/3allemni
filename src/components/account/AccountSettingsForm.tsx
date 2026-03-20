@@ -170,6 +170,10 @@ export default function AccountSettingsForm({ user }: AccountSettingsFormProps) 
     }
   };
 
+  // SECTION 2: Tutor Profile (Visible if user IS currently a tutor)
+  // We keep it visible even if they switch the dropdown to PARENT until they hit save
+  const isCurrentlyTutor = user.role === "TUTOR";
+
   return (
     <div className="space-y-8">
       <form onSubmit={handleSubmit} className="card form">
@@ -208,11 +212,22 @@ export default function AccountSettingsForm({ user }: AccountSettingsFormProps) 
               <option value="PARENT">Parent (Looking for Tutors)</option>
               <option value="TUTOR">Tutor (Offering Lessons)</option>
             </select>
+            {role !== user.role && (
+              <div className="mt-3 p-3 bg-amber-50 border border-yellow-200 rounded-md text-sm text-amber-800 flex gap-2 items-start">
+                <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <p>
+                  <strong>Important:</strong> Changing your account type is a major change. 
+                  You must <strong>Sign Out and Sign In again</strong> after saving for all features (like your Dashboard) to update correctly.
+                </p>
+              </div>
+            )}
           </div>
         </section>
 
-        {/* SECTION 2: Tutor Profile (Conditional) */}
-        {role === "TUTOR" && (
+        {/* SECTION 2: Tutor Profile (Only shown if currently a tutor or if a Parent is upgrading) */}
+        {(isCurrentlyTutor || role === "TUTOR") && (
           <section className="mt-8 pt-8 border-t border-gray-200 space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-bold">Tutor Profile Details</h3>
