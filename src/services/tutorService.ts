@@ -12,6 +12,11 @@ import { serviceLogger } from "@/lib/logger";
 export async function getAllTutors(): Promise<Tutor[]> {
   try {
     const tutors = await prisma.tutor.findMany({
+      include: {
+        educations: {
+          orderBy: { createdAt: "desc" },
+        },
+      },
       orderBy: {
         id: "desc", // Most recent first
       },
@@ -29,6 +34,11 @@ export async function getTutorById(id: string): Promise<Tutor | null> {
   try {
     const tutor = await prisma.tutor.findUnique({
       where: { id },
+      include: {
+        educations: {
+          orderBy: { createdAt: "desc" },
+        },
+      },
     });
     return tutor as Tutor | null;
   } catch (error) {

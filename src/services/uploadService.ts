@@ -37,6 +37,7 @@ export async function uploadProfilePicture(file: File): Promise<string> {
     // Upload to Vercel Blob
     const blob = await put(uniqueFilename, file, {
       access: "public",
+      token: process.env.BLOB_READ_WRITE_TOKEN || process.env.blob_READ_WRITE_TOKEN,
     });
 
     serviceLogger.success("File uploaded successfully:", blob.url);
@@ -66,7 +67,10 @@ export async function uploadDocument(file: File): Promise<string> {
     const extension = file.name.split(".").pop();
     const uniqueFilename = `doc-${timestamp}-${Math.random().toString(36).substring(7)}.${extension}`;
 
-    const blob = await put(uniqueFilename, file, { access: "public" });
+    const blob = await put(uniqueFilename, file, { 
+      access: "public",
+      token: process.env.BLOB_READ_WRITE_TOKEN || process.env.blob_READ_WRITE_TOKEN,
+    });
     return blob.url;
   } catch (error) {
     serviceLogger.error("Error uploading document:", error);

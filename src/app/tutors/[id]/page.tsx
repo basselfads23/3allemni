@@ -1,11 +1,16 @@
 // src/app/tutors/[id]/page.tsx
 import { auth } from "@/lib/auth";
 import { getTutorById } from "@/services/tutorService";
-import { prisma } from "@/lib/prisma"; // Added
+import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import ContactTutorForm from "@/components/tutor/ContactTutorForm";
+import { Tutor, Education } from "@/lib/validations";
+
+type TutorWithEducations = Tutor & {
+  educations: Education[];
+};
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -16,7 +21,7 @@ export default async function TutorProfilePage({ params }: PageProps) {
   const session = await auth();
   
   // 1. Fetch tutor data
-  const tutor = await getTutorById(id);
+  const tutor = await getTutorById(id) as TutorWithEducations | null;
 
   if (!tutor) {
     notFound();
@@ -95,6 +100,33 @@ export default async function TutorProfilePage({ params }: PageProps) {
                   <div className="profile-detail-item pt-4 border-t border-gray-100">
                     <span className="profile-detail-label block mb-2 font-semibold">About Me</span>
                     <p className="profile-bio leading-relaxed text-gray-700 whitespace-pre-line">{tutor.bio}</p>
+                  </div>
+                )}
+
+                {tutor.educations && tutor.educations.length > 0 && (
+                  <div className="profile-detail-item pt-6 border-t border-gray-100">
+                    <span className="profile-detail-label block mb-4 font-semibold text-lg">Education</span>
+                    <div className="space-y-4">
+                      {tutor.educations.map((edu) => (
+                        <div key={edu.id} className="bg-gray-50 rounded-lg p-4 border border-gray-100 relative">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="font-bold text-gray-900">{edu.degree} in {edu.major}</h4>
+                              <p className="text-sm text-gray-600">{edu.university}</p>
+                            </div>
+                            {edu.isVerified ? (
+                              <span className="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+                                Verified
+                              </span>
+                            ) : (
+                              <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+                                Pending
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
