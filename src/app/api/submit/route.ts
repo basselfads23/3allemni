@@ -53,7 +53,6 @@ export async function POST(req: NextRequest) {
     const governorate = formData.get("governorate") as string;
     const district = formData.get("district") as string;
     const city = formData.get("city") as string;
-    const email = formData.get("email") as string;
     const phoneNumber = formData.get("phoneNumber") as string;
     const profilePictureFile = formData.get("profilePicture") as File | null;
 
@@ -68,7 +67,6 @@ export async function POST(req: NextRequest) {
       governorate,
       district,
       city,
-      email,
       phoneNumber,
     };
 
