@@ -118,7 +118,6 @@ export default function AccountSettingsForm({ user }: AccountSettingsFormProps) 
             >
               <option value="PARENT">Parent (Looking for Tutors)</option>
               <option value="TUTOR">Tutor (Offering Lessons)</option>
-              <option value="ADMIN">Admin (System Owner)</option>
             </select>
             
             {role !== user.role && (
