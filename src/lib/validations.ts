@@ -20,7 +20,7 @@ export const tutorSchema = z.object({
 export const userSettingsSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
   phoneNumber: z.string().min(8, "Phone number must be at least 8 digits").optional().or(z.literal("")),
-  role: z.enum(["PARENT", "TUTOR"]),
+  role: z.enum(["PARENT", "TUTOR", "ADMIN"]),
 });
 
 export const educationSchema = z.object({
