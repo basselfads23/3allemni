@@ -42,6 +42,9 @@ export async function DELETE(
 
   } catch (error) {
     apiLogger.error("Error in DELETE /api/admin/users/[id]:", error);
-    return new NextResponse("Internal server error", { status: 500 });
+    
+    // Return specific error message for debugging
+    const message = error instanceof Error ? error.message : "Internal server error";
+    return new NextResponse(message, { status: 500 });
   }
 }
