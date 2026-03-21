@@ -156,7 +156,7 @@ model Message {
   conversationId String
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   senderId       String
-  sender         User         @relation(fields: [senderId], references: [id])
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
   content        String       @db.Text
   isRead         Boolean      @default(false)
   createdAt      DateTime     @default(now())

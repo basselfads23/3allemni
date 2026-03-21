@@ -134,6 +134,30 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteUser = async (userId: string, userEmail: string) => {
+    const confirmed = window.confirm(`Are you sure you want to permanently delete user ${userEmail}? This will also delete their profile, conversations, and messages. This action cannot be undone.`);
+    if (!confirmed) return;
+
+    setProcessingId(userId);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setUsers(prev => prev.filter(u => u.id !== userId));
+        clientLogger.success("User deleted successfully");
+      } else {
+        const txt = await res.text();
+        alert(txt || "Failed to delete user.");
+      }
+    } catch (err) {
+      clientLogger.error("Error deleting user:", err);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Tab Navigation */}
@@ -238,7 +262,7 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end items-center gap-3">
                           <select 
                             value={user.role} 
                             onChange={(e) => handleRoleUpdate(user.id, e.target.value)}
@@ -249,6 +273,14 @@ export default function AdminDashboard() {
                             <option value="TUTOR">Make Tutor</option>
                             <option value="ADMIN">Make Admin</option>
                           </select>
+
+                          <button
+                            onClick={() => handleDeleteUser(user.id, user.email)}
+                            disabled={processingId === user.id}
+                            className="text-xs text-red-500 hover:text-red-700 font-bold uppercase tracking-tighter transition-colors disabled:opacity-50"
+                          >
+                            {processingId === user.id ? "..." : "Delete"}
+                          </button>
                         </div>
                       </td>
                     </tr>
