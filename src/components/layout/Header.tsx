@@ -4,6 +4,7 @@
 
 import Link from "next/link";
 import { auth, signIn, signOut } from "@/lib/auth";
+import ThemeToggle from "@/components/shared/ThemeToggle";
 
 export default async function Header() {
   const session = await auth();
@@ -51,6 +52,7 @@ export default async function Header() {
                 </Link>
               </>
             )}
+            <ThemeToggle />
           </nav>
         </div>
 
