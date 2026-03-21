@@ -30,14 +30,22 @@ export async function DELETE(
       return new NextResponse("You cannot delete your own admin account", { status: 400 });
     }
 
-    // 4. Delete user (Cascading deletes will handle Tutor, Account, Session, Conversations, Messages)
-    apiLogger.info(`Admin ${session.user.id} deleting user ${targetUserId}`);
+    // 4. Aggressive cleanup: Manually delete sent messages first to bypass foreign key constraints
+    // if the database schema hasn't been fully synced with the new cascade rules.
+    apiLogger.info(`Admin ${session.user.id} performing aggressive deletion of user ${targetUserId}`);
     
-    await prisma.user.delete({
-      where: { id: targetUserId }
-    });
+    await prisma.$transaction([
+      // First, wipe their sent messages
+      prisma.message.deleteMany({
+        where: { senderId: targetUserId }
+      }),
+      // Then delete the user (other cascades like Tutor/Account usually work fine)
+      prisma.user.delete({
+        where: { id: targetUserId }
+      })
+    ]);
 
-    apiLogger.success(`User ${targetUserId} deleted successfully`);
+    apiLogger.success(`User ${targetUserId} and their data wiped successfully`);
     return new NextResponse(null, { status: 204 });
 
   } catch (error) {
