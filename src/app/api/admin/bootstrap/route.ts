@@ -37,15 +37,15 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Invalid secret key", { status: 403 });
     }
 
-    // 3. Promote user to ADMIN
-    apiLogger.info(`Promoting user ${session.user.id} to ADMIN via bootstrap`);
+    // 3. Promote user to MASTER_ADMIN
+    apiLogger.info(`Promoting user ${session.user.id} to MASTER_ADMIN via bootstrap`);
     await prisma.user.update({
       where: { id: session.user.id },
-      data: { role: "ADMIN" },
+      data: { role: "MASTER_ADMIN" },
     });
 
-    apiLogger.success(`User ${session.user.id} promoted to ADMIN successfully`);
-    return NextResponse.json({ message: "Promoted to Admin successfully. Please sign out and sign in again." }, { status: 200 });
+    apiLogger.success(`User ${session.user.id} promoted to MASTER_ADMIN successfully`);
+    return NextResponse.json({ message: "Promoted to Master Admin successfully. Please sign out and sign in again." }, { status: 200 });
 
   } catch (error) {
     apiLogger.error("Error in POST /api/admin/bootstrap:", error);

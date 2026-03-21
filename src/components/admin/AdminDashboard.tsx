@@ -29,11 +29,16 @@ type User = {
   id: string;
   name: string | null;
   email: string;
-  role: "ADMIN" | "TUTOR" | "PARENT";
+  role: "ADMIN" | "TUTOR" | "PARENT" | "MASTER_ADMIN";
   createdAt: string;
 };
 
-export default function AdminDashboard() {
+type AdminDashboardProps = {
+  currentUserId: string;
+  currentUserRole: "ADMIN" | "MASTER_ADMIN";
+};
+
+export default function AdminDashboard({ currentUserId, currentUserRole }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<"verification" | "users">("verification");
   
   // State for Verification
@@ -267,20 +272,25 @@ export default function AdminDashboard() {
                             value={user.role} 
                             onChange={(e) => handleRoleUpdate(user.id, e.target.value)}
                             disabled={processingId === user.id}
-                            className="text-xs border border-gray-200 rounded px-2 py-1 bg-white"
+                            className="text-xs border border-gray-200 rounded px-2 py-1 bg-white dark:bg-gray-800 dark:border-gray-700"
                           >
                             <option value="PARENT">Make Parent</option>
                             <option value="TUTOR">Make Tutor</option>
                             <option value="ADMIN">Make Admin</option>
+                            {currentUserRole === "MASTER_ADMIN" && (
+                              <option value="MASTER_ADMIN">Make Master Admin</option>
+                            )}
                           </select>
 
-                          <button
-                            onClick={() => handleDeleteUser(user.id, user.email)}
-                            disabled={processingId === user.id}
-                            className="text-xs text-red-500 hover:text-red-700 font-bold uppercase tracking-tighter transition-colors disabled:opacity-50"
-                          >
-                            {processingId === user.id ? "..." : "Delete"}
-                          </button>
+                          {currentUserRole === "MASTER_ADMIN" && user.id !== currentUserId && (
+                            <button
+                              onClick={() => handleDeleteUser(user.id, user.email)}
+                              disabled={processingId === user.id}
+                              className="text-xs text-red-500 hover:text-red-700 font-bold uppercase tracking-tighter transition-colors disabled:opacity-50"
+                            >
+                              {processingId === user.id ? "..." : "Delete"}
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

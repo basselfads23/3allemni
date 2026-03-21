@@ -16,9 +16,11 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // 1. Authenticate and verify ADMIN
+    // 1. Authenticate and verify ADMIN or MASTER_ADMIN
     const session = await auth();
-    if (!session?.user?.id || session.user.role !== "ADMIN") {
+    const isAuthorized = session?.user?.id && (session.user.role === "ADMIN" || session.user.role === "MASTER_ADMIN");
+    
+    if (!isAuthorized) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
@@ -26,12 +28,17 @@ export async function PATCH(
     const { id: targetUserId } = await context.params;
     const { newRole } = await req.json();
 
-    if (!newRole || !["ADMIN", "TUTOR", "PARENT"].includes(newRole)) {
+    if (!newRole || !["ADMIN", "TUTOR", "PARENT", "MASTER_ADMIN"].includes(newRole)) {
       return new NextResponse("Invalid role", { status: 400 });
     }
 
+    // Security: Only MASTER_ADMIN can promote someone to MASTER_ADMIN
+    if (newRole === "MASTER_ADMIN" && session.user.role !== "MASTER_ADMIN") {
+      return new NextResponse("Forbidden: Only a Master Admin can grant Master Admin status", { status: 403 });
+    }
+
     // Prevent admin from de-ranking themselves (safety check)
-    if (targetUserId === session.user.id && newRole !== "ADMIN") {
+    if (targetUserId === session.user.id && newRole !== session.user.role) {
       return new NextResponse("You cannot remove your own admin status", { status: 400 });
     }
 

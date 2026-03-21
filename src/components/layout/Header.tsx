@@ -39,7 +39,7 @@ export default async function Header() {
 
             {session && (
               <>
-                {session.user.role === "ADMIN" && (
+                {(session.user.role === "ADMIN" || session.user.role === "MASTER_ADMIN") && (
                   <Link href="/admin" className="header-link text-purple-600 font-bold">
                     Admin Dashboard
                   </Link>

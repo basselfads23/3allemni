@@ -14,6 +14,7 @@ enum Role {
   TUTOR
   PARENT
   ADMIN
+  MASTER_ADMIN
 }
 
 enum TeachingMode {

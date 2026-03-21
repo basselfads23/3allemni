@@ -17,7 +17,9 @@ export async function PATCH(req: NextRequest) {
   try {
     // 1. Authenticate session and check ADMIN role
     const session = await auth();
-    if (!session?.user?.id || session.user.role !== "ADMIN") {
+    const isAuthorized = session?.user?.id && (session.user.role === "ADMIN" || session.user.role === "MASTER_ADMIN");
+    
+    if (!isAuthorized) {
       apiLogger.error("Unauthorized admin verification attempt");
       return new NextResponse("Unauthorized", { status: 401 });
     }

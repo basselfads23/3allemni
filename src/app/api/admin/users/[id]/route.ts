@@ -16,10 +16,10 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // 1. Authenticate and verify ADMIN
+    // 1. Authenticate and verify MASTER_ADMIN
     const session = await auth();
-    if (!session?.user?.id || session.user.role !== "ADMIN") {
-      return new NextResponse("Unauthorized", { status: 401 });
+    if (!session?.user?.id || session.user.role !== "MASTER_ADMIN") {
+      return new NextResponse("Unauthorized: Master Admin access required", { status: 401 });
     }
 
     // 2. Extract user ID
