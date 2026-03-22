@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     // 1. Authenticate session
     const session = await auth();
     if (!session?.user?.id) {
-      return new NextResponse("Unauthorized: Please sign in first", { status: 401 });
+      return NextResponse.json({ error: "Unauthorized: Please sign in first" }, { status: 401 });
     }
 
     // 2. Validate secret key from body
@@ -29,12 +29,12 @@ export async function POST(req: NextRequest) {
 
     if (!bootstrapSecret) {
       apiLogger.error("ADMIN_BOOTSTRAP_SECRET is not set in environment variables");
-      return new NextResponse("Bootstrap configuration missing", { status: 500 });
+      return NextResponse.json({ error: "Bootstrap configuration missing on server" }, { status: 500 });
     }
 
     if (secretKey !== bootstrapSecret) {
       apiLogger.error(`Failed bootstrap attempt for user: ${session.user.id}`);
-      return new NextResponse("Invalid secret key", { status: 403 });
+      return NextResponse.json({ error: "Invalid secret key" }, { status: 403 });
     }
 
     // 3. Promote user to MASTER_ADMIN
@@ -49,6 +49,6 @@ export async function POST(req: NextRequest) {
 
   } catch (error) {
     apiLogger.error("Error in POST /api/admin/bootstrap:", error);
-    return new NextResponse("Internal server error", { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
