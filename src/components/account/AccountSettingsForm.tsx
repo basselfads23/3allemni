@@ -5,7 +5,7 @@ import { useState } from "react";
 import { userSettingsSchema } from "@/lib/validations";
 import { clientLogger } from "@/lib/logger";
 
-type UserRole = "PARENT" | "TUTOR" | "ADMIN";
+type UserRole = "PARENT" | "TUTOR" | "ADMIN" | "MASTER_ADMIN";
 
 type UserData = {
   id: string;

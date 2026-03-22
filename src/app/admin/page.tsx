@@ -23,7 +23,10 @@ export default async function AdminPage() {
           <p className="text-gray-600 dark:text-gray-400 mt-2">Review tutor applications and verify educational credentials.</p>
         </div>
 
-        <AdminDashboard currentUserId={session?.user?.id} currentUserRole={session?.user?.role as any} />
+        <AdminDashboard 
+          currentUserId={session?.user?.id as string} 
+          currentUserRole={session?.user?.role as "ADMIN" | "MASTER_ADMIN"} 
+        />
       </div>
     </main>
   );
