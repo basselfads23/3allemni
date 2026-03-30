@@ -3,7 +3,7 @@
 // This component provides consistent navigation across all pages
 
 import Link from "next/link";
-import { auth, signIn, signOut } from "@/lib/auth";
+import { auth, signOut } from "@/lib/auth";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 
 export default async function Header() {
@@ -62,7 +62,7 @@ export default async function Header() {
             <form
               action={async () => {
                 "use server";
-                await signOut({ redirectTo: "/parent" });
+                await signOut({ redirectTo: "/" });
               }}
             >
               <button type="submit" className="header-link text-red-500">
@@ -70,16 +70,18 @@ export default async function Header() {
               </button>
             </form>
           ) : (
-            <form
-              action={async () => {
-                "use server";
-                await signIn("google", { redirectTo: "/tutor/dashboard" });
-              }}
-            >
-              <button type="submit" className="header-link text-blue-600 font-semibold">
-                Sign In / Register
-              </button>
-            </form>
+            <div className="flex items-center gap-4">
+              <a href="/signin" className="header-link font-semibold" style={{ color: "var(--text-accent)" }}>
+                Sign In
+              </a>
+              <a
+                href="/signup"
+                className="px-4 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors"
+                style={{ background: "var(--text-accent)" }}
+              >
+                Sign Up
+              </a>
+            </div>
           )}
         </div>
       </div>
