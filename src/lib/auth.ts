@@ -7,7 +7,7 @@ import GoogleProvider from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
-import { supabaseAdmin } from "@/lib/supabase-admin";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { Role } from "@prisma/client";
 
 // BLOCK: NextAuth configuration
@@ -51,7 +51,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!email || !password) return null;
 
         // Validate credentials against Supabase Auth
-        const { data, error } = await supabaseAdmin.auth.signInWithPassword({
+        const { data, error } = await getSupabaseAdmin().auth.signInWithPassword({
           email,
           password,
         });

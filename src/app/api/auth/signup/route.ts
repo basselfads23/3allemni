@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { supabaseAdmin } from "@/lib/supabase-admin";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { apiLogger } from "@/lib/logger";
 import { z } from "zod";
 
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     // Create user in Supabase Auth (auto-confirmed, no email verification step)
     const { data: supabaseData, error: supabaseError } =
-      await supabaseAdmin.auth.admin.createUser({
+      await getSupabaseAdmin().auth.admin.createUser({
         email,
         password,
         email_confirm: true,
