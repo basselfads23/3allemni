@@ -43,6 +43,7 @@ export default function ChatUI({
   const router = useRouter();
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom
@@ -67,10 +68,11 @@ export default function ChatUI({
         clientLogger.success(`Conversation ${status.toLowerCase()} successfully`);
         router.refresh();
       } else {
-        alert("Failed to update status.");
+        setError("Failed to update conversation status. Please try again.");
       }
     } catch (err) {
       clientLogger.error("Error updating status:", err);
+      setError("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -81,6 +83,7 @@ export default function ChatUI({
     if (!content.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
+    setError(null);
     try {
       const res = await fetch(`/api/conversations/${conversation.id}/messages`, {
         method: "POST",
@@ -93,10 +96,11 @@ export default function ChatUI({
         router.refresh();
       } else {
         const errText = await res.text();
-        alert(errText || "Failed to send message.");
+        setError(errText || "Failed to send message. Please try again.");
       }
     } catch (err) {
       clientLogger.error("Error sending message:", err);
+      setError("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -152,6 +156,17 @@ export default function ChatUI({
 
       {/* Action Area */}
       <div className="p-4 border-t border-gray-100 bg-white">
+        {error && (
+          <div className="mb-3 p-2.5 bg-red-50 border border-red-200 rounded-lg flex justify-between items-center">
+            <p className="text-sm text-red-700">{error}</p>
+            <button onClick={() => setError(null)} className="text-red-400 hover:text-red-600 ml-2 flex-shrink-0" aria-label="Dismiss">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        )}
+
         {isPending && currentUserRole === "TUTOR" && (
           <div className="space-y-3">
             <p className="text-sm text-center text-gray-600 mb-2">New tutoring request received. Accept to start chatting!</p>

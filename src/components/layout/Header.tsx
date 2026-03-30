@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { auth, signOut } from "@/lib/auth";
 import ThemeToggle from "@/components/shared/ThemeToggle";
+import MobileNav from "@/components/layout/MobileNav";
 
 export default async function Header() {
   const session = await auth();
@@ -56,7 +57,7 @@ export default async function Header() {
           </nav>
         </div>
 
-        {/* Right section: Authentication buttons */}
+        {/* Right section: Authentication buttons (desktop) */}
         <div className="header-auth">
           {session ? (
             <form
@@ -84,6 +85,9 @@ export default async function Header() {
             </div>
           )}
         </div>
+
+        {/* Mobile navigation (hamburger) */}
+        <MobileNav role={session?.user?.role} isLoggedIn={!!session} />
       </div>
     </header>
   );

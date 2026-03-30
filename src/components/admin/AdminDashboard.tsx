@@ -2,7 +2,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { clientLogger } from "@/lib/logger";
 
 type Education = {
@@ -50,6 +49,8 @@ export default function AdminDashboard({ currentUserId, currentUserRole }: Admin
   const [loadingUsers, setLoadingUsers] = useState(false);
   
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     if (activeTab === "verification") {
@@ -61,14 +62,18 @@ export default function AdminDashboard({ currentUserId, currentUserRole }: Admin
 
   const fetchTutors = async () => {
     setLoadingTutors(true);
+    setFetchError(null);
     try {
       const res = await fetch("/api/admin/tutors");
       if (res.ok) {
         const data = await res.json();
         setTutors(data);
+      } else {
+        setFetchError("Failed to load verification requests.");
       }
     } catch (err) {
       clientLogger.error("Error fetching tutors:", err);
+      setFetchError("Something went wrong loading verification requests.");
     } finally {
       setLoadingTutors(false);
     }
@@ -76,14 +81,18 @@ export default function AdminDashboard({ currentUserId, currentUserRole }: Admin
 
   const fetchUsers = async () => {
     setLoadingUsers(true);
+    setFetchError(null);
     try {
       const res = await fetch("/api/admin/users");
       if (res.ok) {
         const data = await res.json();
         setUsers(data);
+      } else {
+        setFetchError("Failed to load users.");
       }
     } catch (err) {
       clientLogger.error("Error fetching users:", err);
+      setFetchError("Something went wrong loading users.");
     } finally {
       setLoadingUsers(false);
     }
@@ -91,6 +100,7 @@ export default function AdminDashboard({ currentUserId, currentUserRole }: Admin
 
   const handleVerify = async (educationId: string, isVerified: boolean) => {
     setProcessingId(educationId);
+    setActionError(null);
     try {
       const res = await fetch("/api/admin/verify", {
         method: "PATCH",
@@ -101,14 +111,17 @@ export default function AdminDashboard({ currentUserId, currentUserRole }: Admin
       if (res.ok) {
         setTutors(prev => prev.map(tutor => ({
           ...tutor,
-          educations: tutor.educations.map(edu => 
+          educations: tutor.educations.map(edu =>
             edu.id === educationId ? { ...edu, isVerified } : edu
           )
         })));
         clientLogger.success(`Education ${isVerified ? "verified" : "unverified"} successfully`);
+      } else {
+        setActionError("Failed to update verification status. Please try again.");
       }
     } catch (err) {
       clientLogger.error("Error updating verification:", err);
+      setActionError("Something went wrong. Please try again.");
     } finally {
       setProcessingId(null);
     }
@@ -116,6 +129,7 @@ export default function AdminDashboard({ currentUserId, currentUserRole }: Admin
 
   const handleRoleUpdate = async (userId: string, newRole: string) => {
     setProcessingId(userId);
+    setActionError(null);
     try {
       const res = await fetch(`/api/admin/users/${userId}/role`, {
         method: "PATCH",
@@ -124,16 +138,17 @@ export default function AdminDashboard({ currentUserId, currentUserRole }: Admin
       });
 
       if (res.ok) {
-        setUsers(prev => prev.map(u => 
+        setUsers(prev => prev.map(u =>
           u.id === userId ? { ...u, role: newRole as User["role"] } : u
         ));
         clientLogger.success(`User role updated to ${newRole}`);
       } else {
         const txt = await res.text();
-        alert(txt);
+        setActionError(txt || "Failed to update user role.");
       }
     } catch (err) {
       clientLogger.error("Error updating role:", err);
+      setActionError("Something went wrong. Please try again.");
     } finally {
       setProcessingId(null);
     }
@@ -144,6 +159,7 @@ export default function AdminDashboard({ currentUserId, currentUserRole }: Admin
     if (!confirmed) return;
 
     setProcessingId(userId);
+    setActionError(null);
     try {
       const res = await fetch(`/api/admin/users/${userId}`, {
         method: "DELETE",
@@ -154,10 +170,11 @@ export default function AdminDashboard({ currentUserId, currentUserRole }: Admin
         clientLogger.success("User deleted successfully");
       } else {
         const txt = await res.text();
-        alert(txt || "Failed to delete user.");
+        setActionError(txt || "Failed to delete user.");
       }
     } catch (err) {
       clientLogger.error("Error deleting user:", err);
+      setActionError("Something went wrong. Please try again.");
     } finally {
       setProcessingId(null);
     }
@@ -165,6 +182,25 @@ export default function AdminDashboard({ currentUserId, currentUserRole }: Admin
 
   return (
     <div className="space-y-8">
+      {/* Action Error Banner */}
+      {actionError && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex justify-between items-center">
+          <p className="text-sm text-red-700 font-medium">{actionError}</p>
+          <button onClick={() => setActionError(null)} className="text-red-500 hover:text-red-700 ml-4 flex-shrink-0" aria-label="Dismiss">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {/* Fetch Error Banner */}
+      {fetchError && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-center">
+          <p className="text-sm text-red-700 font-medium">{fetchError}</p>
+        </div>
+      )}
+
       {/* Tab Navigation */}
       <div className="flex gap-4 border-b border-gray-200">
         <button 
@@ -240,9 +276,11 @@ export default function AdminDashboard({ currentUserId, currentUserRole }: Admin
         <section>
           {loadingUsers ? (
             <div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div></div>
+          ) : users.length === 0 ? (
+            <div className="card p-12 text-center text-gray-500">No users found.</div>
           ) : (
-            <div className="card p-0 overflow-hidden border border-gray-200">
-              <table className="w-full text-left">
+            <div className="card p-0 overflow-hidden border border-gray-200 overflow-x-auto">
+              <table className="w-full text-left min-w-[480px]">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">User</th>
