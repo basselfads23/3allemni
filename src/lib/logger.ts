@@ -5,15 +5,16 @@
 
 // BLOCK: Configuration
 // Control whether logging is enabled based on environment
-const LOGGING_ENABLED = process.env.NODE_ENV === "development";
+const IS_DEV = process.env.NODE_ENV === "development";
 
 // Optional: Enable/disable specific log levels
+// Errors and warnings always log; verbose levels are dev-only
 const LOG_LEVELS = {
-  INFO: true, // 🔵 General information
-  SUCCESS: true, // 🟢 Success messages
-  ERROR: true, // 🔴 Error messages
-  WARN: true, // 🟡 Warning messages
-  DEBUG: true, // 🟣 Debug information
+  INFO: IS_DEV,
+  SUCCESS: IS_DEV,
+  ERROR: true, // always log errors in all environments
+  WARN: true,  // always log warnings in all environments
+  DEBUG: IS_DEV,
 };
 
 // BLOCK: Logger Interface
@@ -24,7 +25,7 @@ export const logger = {
    * Use for: API calls, function entry, general info
    */
   info: (context: string, message: string, ...data: unknown[]) => {
-    if (LOGGING_ENABLED && LOG_LEVELS.INFO) {
+    if (LOG_LEVELS.INFO) {
       console.log(`🔵 [${context}]`, message, ...data);
     }
   },
@@ -34,7 +35,7 @@ export const logger = {
    * Use for: Successful operations, completed tasks
    */
   success: (context: string, message: string, ...data: unknown[]) => {
-    if (LOGGING_ENABLED && LOG_LEVELS.SUCCESS) {
+    if (LOG_LEVELS.SUCCESS) {
       console.log(`🟢 [${context}]`, message, ...data);
     }
   },
@@ -44,7 +45,7 @@ export const logger = {
    * Use for: Errors, exceptions, failures
    */
   error: (context: string, message: string, ...data: unknown[]) => {
-    if (LOGGING_ENABLED && LOG_LEVELS.ERROR) {
+    if (LOG_LEVELS.ERROR) {
       console.error(`🔴 [${context}]`, message, ...data);
     }
   },
@@ -54,7 +55,7 @@ export const logger = {
    * Use for: Warnings, potential issues
    */
   warn: (context: string, message: string, ...data: unknown[]) => {
-    if (LOGGING_ENABLED && LOG_LEVELS.WARN) {
+    if (LOG_LEVELS.WARN) {
       console.warn(`🟡 [${context}]`, message, ...data);
     }
   },
@@ -64,7 +65,7 @@ export const logger = {
    * Use for: Detailed debugging information
    */
   debug: (context: string, message: string, ...data: unknown[]) => {
-    if (LOGGING_ENABLED && LOG_LEVELS.DEBUG) {
+    if (LOG_LEVELS.DEBUG) {
       console.log(`🟣 [${context}]`, message, ...data);
     }
   },
@@ -134,7 +135,7 @@ export const enableLogging = () => {
  * Log object as formatted JSON (useful for debugging)
  */
 export const logJSON = (context: string, label: string, obj: unknown) => {
-  if (LOGGING_ENABLED) {
+  if (IS_DEV) {
     console.log(`🟣 [${context}] ${label}:`, JSON.stringify(obj, null, 2));
   }
 };

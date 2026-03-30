@@ -44,11 +44,12 @@ export async function POST(
     const { id: conversationId } = await context.params;
     const { content } = await req.json();
 
-    if (!content) {
+    const trimmedContent = typeof content === "string" ? content.trim() : "";
+    if (!trimmedContent) {
       return new NextResponse("Message content is required", { status: 400 });
     }
 
-    const message = await sendMessage(conversationId, session.user.id, content);
+    const message = await sendMessage(conversationId, session.user.id, trimmedContent);
     return NextResponse.json(message, { status: 201 });
   } catch (error) {
     apiLogger.error("Error in POST /api/conversations/[id]/messages:", error);

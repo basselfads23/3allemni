@@ -18,10 +18,11 @@ export async function PATCH(
   try {
     // 1. Authenticate and verify ADMIN or MASTER_ADMIN
     const session = await auth();
-    const isAuthorized = session?.user?.id && (session.user.role === "ADMIN" || session.user.role === "MASTER_ADMIN");
-    
-    if (!isAuthorized) {
+    if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
+    }
+    if (session.user.role !== "ADMIN" && session.user.role !== "MASTER_ADMIN") {
+      return new NextResponse("Forbidden", { status: 403 });
     }
 
     // 2. Parse request

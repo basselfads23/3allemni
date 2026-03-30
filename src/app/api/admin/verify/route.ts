@@ -17,11 +17,13 @@ export async function PATCH(req: NextRequest) {
   try {
     // 1. Authenticate session and check ADMIN role
     const session = await auth();
-    const isAuthorized = session?.user?.id && (session.user.role === "ADMIN" || session.user.role === "MASTER_ADMIN");
-    
-    if (!isAuthorized) {
-      apiLogger.error("Unauthorized admin verification attempt");
+    if (!session?.user?.id) {
+      apiLogger.error("Unauthenticated admin verification attempt");
       return new NextResponse("Unauthorized", { status: 401 });
+    }
+    if (session.user.role !== "ADMIN" && session.user.role !== "MASTER_ADMIN") {
+      apiLogger.error("Forbidden admin verification attempt");
+      return new NextResponse("Forbidden", { status: 403 });
     }
 
     // 2. Parse and validate body

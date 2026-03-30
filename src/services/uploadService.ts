@@ -29,7 +29,7 @@ export async function uploadProfilePicture(file: File): Promise<string> {
     // Generate unique filename to avoid collisions
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 8);
-    const extension = file.name.split(".").pop();
+    const extension = file.name.split(".").pop() || "bin";
     const uniqueFilename = `profile-${timestamp}-${randomString}.${extension}`;
 
     serviceLogger.info("Uploading file to Vercel Blob:", uniqueFilename);
@@ -64,7 +64,7 @@ export async function uploadDocument(file: File): Promise<string> {
     }
 
     const timestamp = Date.now();
-    const extension = file.name.split(".").pop();
+    const extension = file.name.split(".").pop() || "bin";
     const uniqueFilename = `doc-${timestamp}-${Math.random().toString(36).substring(7)}.${extension}`;
 
     const blob = await put(uniqueFilename, file, { 

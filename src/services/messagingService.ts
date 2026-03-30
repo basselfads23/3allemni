@@ -155,6 +155,14 @@ export async function sendMessage(conversationId: string, senderId: string, cont
 
     if (!conversation) throw new Error("Conversation not found");
 
+    // Rule 0: Verify the sender is actually a participant in this conversation
+    const isParticipant =
+      senderId === conversation.parentId ||
+      senderId === conversation.tutor.userId;
+    if (!isParticipant) {
+      throw new Error("You are not a participant in this conversation");
+    }
+
     // Rule 1: Cannot send to declined conversations
     if (conversation.status === ConversationStatus.DECLINED) {
       throw new Error("Cannot send messages to a declined conversation");

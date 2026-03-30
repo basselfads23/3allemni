@@ -21,7 +21,12 @@ export async function GET(req: NextRequest) {
     if (!session?.user?.id) return new NextResponse("Unauthorized", { status: 401 });
 
     const userId = session.user.id;
-    const role = session.user.role as "PARENT" | "TUTOR";
+    const role = session.user.role;
+
+    // Only PARENT and TUTOR users have conversations
+    if (role !== "PARENT" && role !== "TUTOR") {
+      return NextResponse.json([], { status: 200 });
+    }
 
     const conversations = await getConversationsForUser(userId, role);
     return NextResponse.json(conversations, { status: 200 });
@@ -38,17 +43,24 @@ export async function POST(req: NextRequest) {
     const session = await auth();
     if (!session?.user?.id) return new NextResponse("Unauthorized", { status: 401 });
 
+    // Only PARENT users can initiate conversations
+    if (session.user.role !== "PARENT") {
+      return new NextResponse("Forbidden: Only parents can start conversations", { status: 403 });
+    }
+
     const body = await req.json();
     const { tutorId, initialMessage } = body;
 
-    if (!tutorId || !initialMessage) {
+    const trimmedMessage = typeof initialMessage === "string" ? initialMessage.trim() : "";
+
+    if (!tutorId || !trimmedMessage) {
       return new NextResponse("Missing required fields", { status: 400 });
     }
 
     const conversation = await createConversation(
       session.user.id,
       tutorId,
-      initialMessage
+      trimmedMessage
     );
 
     return NextResponse.json(conversation, { status: 201 });
